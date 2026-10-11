@@ -31,12 +31,18 @@
     banner: { attribution: 'text', attributionLogo: 'on-light', poweredByText: 'Powered by argnode',
       poweredByUrl: null, policyUrl: null },
     // B6.1: a pseudonymous user ID from a URL parameter, stored only with consent.
-    identity: { enabled: false, cookieName: 'ack_uid', maxAgeDays: 365, category: 'statistic', dataLayerKey: 'user_id',
+    // The ID is used only when ALL categories in `categories` are granted.
+    identity: { enabled: false, cookieName: 'ack_uid', maxAgeDays: 365, categories: ['statistic'], dataLayerKey: 'user_id',
       pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' },
     bots: { skip: true, pattern: null },
     css: true,
     customCss: false,
-    customTexts: []
+    customTexts: [],
+    // B9.4: site scripts in this folder that connect the tool to the site's own
+    // systems (e.g. a CRM). Loaded after settings; their answer is awaited at most
+    // extensionTimeoutMs before the tool falls back to the cookie or the banner.
+    extensions: [],
+    extensionTimeoutMs: 2000
   };
 
   var ATTRIBUTION_HOST = 'argnode.com';
@@ -324,11 +330,22 @@
   var listeners = [];
   var dialog = null;
   var choiceMade = false;
+  var userId = null;       // pseudonymous ID for this visit (B6.1), or null
+  var textVersion = null;  // hash of the texts shown in the banner, stored with the choice
+  var extensions = [];     // registered with ack.use() (B9.4)
   var readyResolve;
   var ready = new Promise(function (r) { readyResolve = r; });
 
   function optionalCategories() {
     return categories.filter(function (c) { return !c.required; });
+  }
+
+  // Shown in the banner, and so grantable: necessary always; others only if they
+  // list cookies. An `identityOnly` category is shown only to a visitor with an ID.
+  function isShown(cat) {
+    if (cat.required) return true;
+    if (!(cat.cookies || []).length) return false;
+    return !cat.identityOnly || !!userId;
   }
 
   function isGranted(cat, rec) {
@@ -404,6 +421,7 @@
       });
     }).then(function (t) {
       texts = t;
+      textVersion = hash(JSON.stringify(t));
       return t;
     });
   }
@@ -434,14 +452,18 @@
     return null;
   }
 
-  // A category with no cookies in the list is not shown, so it can never be granted:
-  // Accept all must not grant (or fire tags for) something the visitor never saw.
+  // A category that is not shown can never be granted: Accept all must not
+  // grant (or fire tags for) something the visitor never saw.
   function normalise(c) {
     var out = {};
     optionalCategories().forEach(function (cat) {
-      out[cat.id] = !!(c && c[cat.id]) && (cat.cookies || []).length > 0;
+      out[cat.id] = !!(c && c[cat.id]) && isShown(cat);
     });
     return out;
+  }
+
+  function sameChoice(a, b) {
+    return !!a && !!b && JSON.stringify(normalise(a)) === JSON.stringify(normalise(b));
   }
 
   // ------------------------------------------------------- B9: outbound events
@@ -471,8 +493,15 @@
     });
 
     if (changed) {
-      var detail = { v: newRecord.v, ts: newRecord.ts, c: newRecord.c, src: newRecord.src };
+      var detail = { v: newRecord.v, t: newRecord.t, ts: newRecord.ts, c: newRecord.c, src: newRecord.src };
       dataLayer.push({ event: 'ack_consent_update', ack: detail });
+      // B9.4: extensions see the choice with the button that made it; `action` is
+      // set only for a real banner action, never for a consent read on page load.
+      var extDetail = merge(detail, { action: newRecord.action || null });
+      extensions.forEach(function (ext) {
+        if (typeof ext.onConsent !== 'function') return;
+        try { ext.onConsent(extDetail, extensionContext()); } catch (e) { warn('Extension ' + (ext.name || '') + ': ' + e.message); }
+      });
       try {
         document.dispatchEvent(new CustomEvent('ack:consent', { detail: detail }));
       } catch (e) { /* very old browser: the dataLayer event is enough */ }
@@ -482,52 +511,106 @@
     }
   }
 
-  // B6.1. The ID cookie value is "<id>.<source>": "login" when a logged-in system
-  // (e.g. a customer portal on the same main domain) set it, "link" when it came
-  // from a URL. A link never replaces a login ID: links get forwarded, logins do not.
+  // B6.1. The ID comes from the URL parameter if there is a valid one, else from
+  // the ID cookie (which a logged-in system on the same main domain may also set).
+  // It is stored and sent only while every category in identity.categories is granted.
   var identityPushed = false;
 
-  function identityCategory() {
-    var id = settings.identity && settings.identity.category;
-    for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
-    return null;
+  function identityCategories() {
+    var conf = settings.identity || {};
+    var ids = conf.categories || (conf.category ? [conf.category] : []); // `category`: setting name in 0.2
+    return categories.filter(function (c) { return ids.indexOf(c.id) >= 0; });
+  }
+
+  function findUserId() {
+    var conf = settings.identity;
+    if (!conf || !conf.enabled) return null;
+    var valid = new RegExp(conf.pattern, 'i');
+    if (urlUserId && valid.test(urlUserId)) return urlUserId;
+    var stored = (readCookie(conf.cookieName) || '').toLowerCase().replace(/\.(login|link)$/, ''); // 0.2 wrote a suffix
+    return valid.test(stored) ? stored : null;
+  }
+
+  function identityCookieOptions() {
+    return { path: settings.storage.path, sameSite: settings.storage.sameSite,
+      maxAgeDays: settings.identity.maxAgeDays, domain: settings.storage.domain };
   }
 
   function applyIdentity(rec) {
     var conf = settings.identity;
-    var cat = identityCategory();
-    if (!conf || !conf.enabled || !cat) return;
-    if (!isGranted(cat, rec)) {
+    var cats = identityCategories();
+    if (!conf || !conf.enabled || !cats.length) return;
+    var granted = cats.every(function (cat) { return isGranted(cat, rec); });
+    if (!granted) {
       deleteCookie(conf.cookieName); // no consent, no ID; withdrawal also deletes it
       return;
     }
-    var stored = readCookie(conf.cookieName) || '';
-    var dot = stored.lastIndexOf('.');
-    var storedId = dot > 0 ? stored.slice(0, dot) : '';
-    var storedSrc = dot > 0 ? stored.slice(dot + 1) : '';
-    var valid = new RegExp(conf.pattern, 'i');
-    var id = valid.test(storedId) ? storedId : null;
-    if (urlUserId && valid.test(urlUserId) && !(id && storedSrc === 'login')) {
-      id = urlUserId;
-      writeCookie(conf.cookieName, id + '.link', { path: settings.storage.path, sameSite: settings.storage.sameSite,
-        maxAgeDays: conf.maxAgeDays, domain: settings.storage.domain });
-    } else if (id) {
-      // Rewrite with the same value to renew the lifetime on each consented visit.
-      writeCookie(conf.cookieName, stored, { path: settings.storage.path, sameSite: settings.storage.sameSite,
-        maxAgeDays: conf.maxAgeDays, domain: settings.storage.domain });
-    }
-    if (id && !identityPushed) {
+    if (!userId) return;
+    // Written on every consented visit: stores a ?uid= landing and renews the lifetime.
+    writeCookie(conf.cookieName, userId, identityCookieOptions());
+    if (!identityPushed) {
       identityPushed = true;
       var push = {};
-      push[conf.dataLayerKey] = id;
+      push[conf.dataLayerKey] = userId;
       dataLayer.push(push);
     }
   }
 
-  function saveChoice(c, src) {
-    var rec = { v: version, ts: nowSeconds(), c: normalise(c), src: src };
+  // ---------------------------------------------------------- B9.4: extensions
+
+  function extensionContext() {
+    return {
+      userId: userId,
+      version: version,
+      textVersion: textVersion,
+      lang: lang,
+      categories: categories,
+      shownCategoryIds: function () {
+        return optionalCategories().filter(isShown).map(function (c) { return c.id; });
+      },
+      signalsFor: function (c) { return signalsFor({ c: c }); },
+      forgetUserId: function () {
+        deleteCookie(settings.identity.cookieName);
+        userId = null;
+      }
+    };
+  }
+
+  function loadExtensions() {
+    return Promise.all((settings.extensions || []).map(function (path) {
+      return new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = baseUrl + path;
+        s.onload = s.onerror = function () { resolve(); };
+        document.head.appendChild(s);
+      });
+    }));
+  }
+
+  // The first extension that answers with a choice ({ c: {...} }) wins; null means no answer.
+  function askExtensions() {
+    if (!extensions.length) return Promise.resolve(null);
+    var ctx = extensionContext();
+    var asks = extensions.map(function (ext) {
+      if (typeof ext.resolve !== 'function') return Promise.resolve(null);
+      return Promise.resolve().then(function () { return ext.resolve(ctx); }).catch(function (e) {
+        warn('Extension ' + (ext.name || '') + ': ' + (e && e.message));
+        return null;
+      });
+    });
+    var timeout = new Promise(function (resolve) { setTimeout(function () { resolve([]); }, settings.extensionTimeoutMs); });
+    return Promise.race([Promise.all(asks), timeout]).then(function (answers) {
+      for (var i = 0; i < answers.length; i++) if (answers[i] && isPlainObject(answers[i].c)) return answers[i];
+      return null;
+    });
+  }
+
+  function saveChoice(c, src, action) {
+    var rec = { v: version, t: textVersion, ts: nowSeconds(), c: normalise(c), src: src };
     writeCookie(settings.storage.cookieName, encodeURIComponent(JSON.stringify(rec)), settings.storage);
+    rec.action = action; // for extensions only; not stored
     applyConsent(rec, true);
+    delete rec.action;
   }
 
   // ----------------------------------------------------------- B10: banner
@@ -602,7 +685,7 @@
   function bannerHtml(current, showCategories) {
     var policy = policyUrl();
     // Categories with no cookies are not shown in the banner (B3.2), necessary always is.
-    var cats = categories.filter(function (c) { return c.required || (c.cookies || []).length; });
+    var cats = categories.filter(isShown);
     return '<dialog class="ack-banner' + (showCategories ? ' ack-banner--expanded' : '') + '" id="ack-banner" aria-labelledby="ack-title" lang="' + escapeHtml(lang) + '">' +
       '<form class="ack-banner__inner" method="dialog">' +
       '<div class="ack-banner__header">' +
@@ -651,15 +734,15 @@
       if (firstToggle) firstToggle.focus();
       return;
     }
-    if (action === 'accept') saveChoice(all, 'banner');
-    else if (action === 'reject') saveChoice({}, 'banner');
+    if (action === 'accept') saveChoice(all, 'banner', 'accept');
+    else if (action === 'reject') saveChoice({}, 'banner', 'reject');
     else if (action === 'save') {
       var c = {};
       optionalCategories().forEach(function (cat) {
         var input = dialog.querySelector('input[name="' + cat.id + '"]');
         c[cat.id] = !!(input && input.checked);
       });
-      saveChoice(c, 'banner');
+      saveChoice(c, 'banner', 'save');
     }
     closeBanner();
   }
@@ -744,6 +827,8 @@
     getConsent: function () { return record ? JSON.parse(JSON.stringify(record)) : null; },
     on: function (name, fn) { if (name === 'consent' && typeof fn === 'function') listeners.push(fn); },
     renderPolicy: renderPolicy,
+    // B9.4: register an extension { name, resolve(ctx), onConsent(detail, ctx) }.
+    use: function (ext) { if (ext) extensions.push(ext); },
     reset: function () {
       return ready.then(ensureTexts).then(function () {
         deleteCookie(settings.storage.cookieName);
@@ -781,30 +866,36 @@
 
     // Late bot check with the deployer's own pattern. The loader may have started
     // already; consent stays denied, so nothing is measured.
-    if (settings.bots.skip && skipBots && settings.bots.pattern && isBot(settings.bots.pattern)) return;
+    if (settings.bots.skip && skipBots && settings.bots.pattern && isBot(settings.bots.pattern)) return 'bot';
 
     if (settings.loader.mode === 'gtm') startLoader('gtm', settings.loader.gtmId);
     else if (settings.loader.mode === 'gtag') startLoader('gtag', settings.loader.gtagId);
     if (settings.customCss) addStylesheet(baseUrl + 'custom.css');
+    userId = findUserId();
     if (settings.identity.enabled) {
-      var idCat = identityCategory();
-      var listed = idCat && (idCat.cookies || []).some(function (k) { return k.name === settings.identity.cookieName; });
-      if (!listed) warn('identity is enabled, but cookie "' + settings.identity.cookieName + '" is not listed in category "' +
-        settings.identity.category + '" of the cookie list. List it, so visitors are told about it.');
+      var listed = identityCategories().some(function (cat) {
+        return (cat.cookies || []).some(function (k) { return k.name === settings.identity.cookieName; });
+      });
+      if (!listed) warn('identity is enabled, but cookie "' + settings.identity.cookieName + '" is not listed ' +
+        'in any of identity.categories. List it, so visitors are told about it.');
     }
 
-    // B8: external source, then the local cookie, then the banner.
-    var external = readExternalRecord();
-    if (external && external.v === version) {
+    return loadExtensions().then(askExtensions);
+  }).then(function (fromExtension) {
+    if (fromExtension === 'bot') return;
+
+    // B8: external source (dataLayer push, then an extension), then the local cookie, then the banner.
+    var stored = readStoredRecord();
+    if (isValid(stored)) stored.c = normalise(stored.c);
+    var pushed = readExternalRecord();
+    var external = pushed && pushed.v === version ? pushed : fromExtension;
+    if (external) {
       var rec = { v: version, ts: external.ts || nowSeconds(), c: normalise(external.c), src: 'external' };
-      writeCookie(settings.storage.cookieName, encodeURIComponent(JSON.stringify(rec)), settings.storage);
-      applyConsent(rec, true);
-    } else {
-      var stored = readStoredRecord();
-      if (isValid(stored)) {
-        stored.c = normalise(stored.c);
-        applyConsent(stored, false);
-      }
+      var changed = !(isValid(stored) && sameChoice(stored.c, rec.c));
+      if (changed) writeCookie(settings.storage.cookieName, encodeURIComponent(JSON.stringify(rec)), settings.storage);
+      applyConsent(changed ? rec : stored, changed);
+    } else if (isValid(stored)) {
+      applyConsent(stored, false);
     }
     readyResolve();
 

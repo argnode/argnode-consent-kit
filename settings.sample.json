@@ -26,7 +26,9 @@
     "enabled": false,
     "cookieName": "ack_uid",
     "maxAgeDays": 365,
-    "category": "statistic",
+    "categories": [
+      "statistic"
+    ],
     "dataLayerKey": "user_id",
     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
   },
@@ -45,5 +47,7 @@
     "pattern": null
   },
   "customCss": false,
-  "customTexts": []
+  "customTexts": [],
+  "extensions": [],
+  "extensionTimeoutMs": 2000
 }

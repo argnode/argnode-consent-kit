@@ -4,7 +4,7 @@ Free, open-source, self-hosted consent management platform (CMP) with native Goo
 
 Made by [Argnode Oy](https://www.argnode.com).
 
-Status: version 0.2. The design is in [docs/DESIGN.md](docs/DESIGN.md).
+Status: version 0.3. The design is in [docs/DESIGN.md](docs/DESIGN.md).
 
 ## What it does
 
@@ -115,12 +115,22 @@ All classes start with `ack-`. Nothing in `ack.css` targets elements outside `.a
 
 You can send a pseudonymous user ID (for example a CRM user ID) to Google Analytics 4 as `user_id`. The tool stores it only if the visitor allows statistics.
 
-1. Set `"identity": { "enabled": true }` in `settings.json`.
-2. List `ack_uid` in the `statistic` category of `cookies.json`.
+1. Set `"identity": { "enabled": true }` in `settings.json`. `identity.categories` lists the categories that must all be allowed (default: `statistic`).
+2. List `ack_uid` in one of those categories in `cookies.json`.
 3. To read the ID from links such as `?uid=<id>`, add `data-identity-param="uid"` to the script tag. The tool removes the parameter from the address bar before analytics loads.
 4. In GTM, make a Data Layer Variable `user_id`. Set it as the `user_id` parameter of your Google tag.
 
 Only IDs that match `identity.pattern` (default: a UUID) are used. Do not use an email address or a name as the ID. Read section B6.1 of the [design](docs/DESIGN.md) for the limits.
+
+## Extensions
+
+To connect the banner to your own system (for example a CRM), write a small script, put it in `extensions/` in the tool folder, and list it in `settings.json`:
+
+```json
+{ "extensions": ["extensions/my-crm.js"] }
+```
+
+The script calls `ack.use({ name, resolve, onConsent })`. Read section B9.4 of the [design](docs/DESIGN.md). The `extensions/` folder is in `.gitignore`.
 
 ## Change the texts
 
