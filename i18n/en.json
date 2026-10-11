@@ -11,6 +11,15 @@
   "policyUpdated": "Last updated",
   "policyChange": "Change my cookie choices",
   "policyNone": "None",
-  "table": { "name": "Name", "provider": "Provider", "domain": "Domain",
-             "purpose": "Purpose", "duration": "Duration", "setWhen": "Set when" }
+  "table": {
+    "name": "Name",
+    "provider": "Provider",
+    "domain": "Domain",
+    "purpose": "Purpose",
+    "duration": "Duration",
+    "setWhen": "Set when",
+    "sharedWith": "Data shared with"
+  },
+  "cookiesSummary": "Cookies ({n})",
+  "policyVersion": "Consent version"
 }

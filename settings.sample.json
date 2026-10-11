@@ -1,0 +1,37 @@
+{
+  "loader": {
+    "mode": "gtm",
+    "gtmId": "GTM-XXXXXXX",
+    "gtagId": "G-XXXXXXXXXX",
+    "gtmDataLayerName": "dataLayer"
+  },
+  "consentMode": {
+    "waitForUpdate": 500,
+    "urlPassthrough": true,
+    "adsDataRedaction": true
+  },
+  "language": {
+    "source": "html",
+    "fixed": null,
+    "fallback": "en"
+  },
+  "storage": {
+    "cookieName": "ack_consent",
+    "maxAgeDays": 365,
+    "domain": "auto",
+    "path": "/",
+    "sameSite": "Lax"
+  },
+  "banner": {
+    "showPoweredBy": true,
+    "poweredByText": "Powered by argnode",
+    "poweredByUrl": null,
+    "policyUrl": { "en": "/cookie-policy", "fi": "/evastekaytanto" }
+  },
+  "bots": {
+    "skip": true,
+    "pattern": null
+  },
+  "customCss": false,
+  "customTexts": []
+}

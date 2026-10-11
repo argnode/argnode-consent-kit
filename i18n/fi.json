@@ -11,6 +11,15 @@
   "policyUpdated": "Päivitetty",
   "policyChange": "Muuta evästevalintojani",
   "policyNone": "Ei evästeitä",
-  "table": { "name": "Nimi", "provider": "Tarjoaja", "domain": "Verkkotunnus",
-             "purpose": "Tarkoitus", "duration": "Kesto", "setWhen": "Asetetaan" }
+  "table": {
+    "name": "Nimi",
+    "provider": "Tarjoaja",
+    "domain": "Verkkotunnus",
+    "purpose": "Tarkoitus",
+    "duration": "Kesto",
+    "setWhen": "Asetetaan",
+    "sharedWith": "Tietoja saa"
+  },
+  "cookiesSummary": "Evästeet ({n})",
+  "policyVersion": "Suostumusversio"
 }

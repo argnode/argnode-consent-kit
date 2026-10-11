@@ -1,0 +1,2 @@
+# Deny the git metadata folder when this repository is cloned into the web root.
+RedirectMatch 404 /\.git

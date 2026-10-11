@@ -1,0 +1,291 @@
+/*! argnode Consent Kit | MPL-2.0 | Copyright (c) Argnode Oy */
+/*
+ * Default base theme. Every selector is under .ack-banner or .ack-policy, so
+ * nothing leaks into the host site. Theme it by overriding the variables in
+ * your own custom.css (settings.json: "customCss": true). No !important.
+ *
+ * Accept and Reject share the same variables by default: equal prominence is a
+ * compliance requirement (Traficom section 4.1). If you change one, change both.
+ */
+
+.ack-banner,
+.ack-policy {
+  --ack-font: inherit;
+  --ack-font-size: 1rem;
+  --ack-bg: #fff;
+  --ack-fg: #111;
+  --ack-muted: #555;
+  --ack-rule: #ddd;
+  --ack-radius: 4px;
+  --ack-max-width: 40rem;
+  --ack-gap: 1rem;
+  --ack-backdrop: rgb(0 0 0 / .5);
+  --ack-focus: #0a58ca;
+
+  --ack-button-radius: var(--ack-radius);
+  --ack-button-bg: #111;
+  --ack-button-fg: #fff;
+  --ack-button-border: #111;
+  --ack-button-accept-bg: var(--ack-button-bg);
+  --ack-button-accept-fg: var(--ack-button-fg);
+  --ack-button-reject-bg: var(--ack-button-bg);
+  --ack-button-reject-fg: var(--ack-button-fg);
+  --ack-button-customize-bg: transparent;
+  --ack-button-customize-fg: var(--ack-fg);
+
+  --ack-switch-off: #999;
+  --ack-switch-on: #111;
+  --ack-switch-knob: #fff;
+}
+
+/* ---------------------------------------------------------------- banner */
+
+.ack-banner {
+  box-sizing: border-box;
+  width: calc(100% - 2rem);
+  max-width: var(--ack-max-width);
+  max-height: calc(100% - 2rem);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--ack-rule);
+  border-radius: var(--ack-radius);
+  background: var(--ack-bg);
+  color: var(--ack-fg);
+  font-family: var(--ack-font);
+  font-size: var(--ack-font-size);
+  line-height: 1.5;
+}
+
+.ack-banner::backdrop {
+  background: var(--ack-backdrop);
+}
+
+.ack-banner *,
+.ack-banner *::before,
+.ack-banner *::after {
+  box-sizing: inherit;
+}
+
+.ack-banner__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ack-gap);
+  margin: 0;
+  padding: 1.5rem;
+}
+
+.ack-banner__title {
+  margin: 0;
+  font-size: 1.25em;
+  line-height: 1.3;
+}
+
+.ack-banner__title:focus {
+  outline: none;
+}
+
+.ack-banner__intro {
+  margin: 0;
+}
+
+.ack-banner a {
+  color: inherit;
+}
+
+.ack-banner :focus-visible,
+.ack-policy :focus-visible {
+  outline: 2px solid var(--ack-focus);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.ack-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+}
+
+.ack-button {
+  min-height: 2.75rem;
+  padding: .5rem 1rem;
+  border: 1px solid var(--ack-button-border);
+  border-radius: var(--ack-button-radius);
+  background: var(--ack-button-bg);
+  color: var(--ack-button-fg);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.ack-button[hidden] {
+  display: none;
+}
+
+.ack-button--accept {
+  background: var(--ack-button-accept-bg);
+  color: var(--ack-button-accept-fg);
+}
+
+.ack-button--reject {
+  background: var(--ack-button-reject-bg);
+  color: var(--ack-button-reject-fg);
+}
+
+.ack-button--customize,
+.ack-button--save {
+  grid-column: 1 / -1;
+}
+
+.ack-button--customize {
+  background: var(--ack-button-customize-bg);
+  color: var(--ack-button-customize-fg);
+}
+
+@media (max-width: 30rem) {
+  .ack-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------------------- categories */
+
+.ack-categories {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--ack-rule);
+}
+
+.ack-categories[hidden] {
+  display: none;
+}
+
+.ack-category {
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--ack-rule);
+}
+
+.ack-category__description {
+  margin: .25rem 0 .5rem;
+  color: var(--ack-muted);
+  font-size: .9em;
+}
+
+.ack-category__summary {
+  cursor: pointer;
+  font-size: .9em;
+}
+
+.ack-switch {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ack-switch__input {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 2.5rem;
+  height: 1.5rem;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--ack-switch-off);
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.ack-switch__input::before {
+  content: "";
+  position: absolute;
+  top: .1875rem;
+  left: .1875rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--ack-switch-knob);
+  transition: transform .15s;
+}
+
+.ack-switch__input:checked {
+  background: var(--ack-switch-on);
+}
+
+.ack-switch__input:checked::before {
+  transform: translateX(1rem);
+}
+
+.ack-switch__input:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.ack-switch__state {
+  margin-left: auto;
+  color: var(--ack-muted);
+  font-weight: 400;
+  font-size: .85em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ack-switch__input,
+  .ack-switch__input::before {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ tables */
+
+.ack-table-wrap,
+.ack-policy__table-wrap {
+  overflow-x: auto;
+  margin-top: .5rem;
+}
+
+.ack-table,
+.ack-policy__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85em;
+}
+
+.ack-table th,
+.ack-table td,
+.ack-policy__table th,
+.ack-policy__table td {
+  padding: .375rem .5rem;
+  border: 1px solid var(--ack-rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ack-powered {
+  margin: 0;
+  font-size: .8em;
+  color: var(--ack-muted);
+  text-align: right;
+}
+
+/* ------------------------------------------------------------------ policy */
+
+.ack-policy {
+  background: transparent;
+}
+
+.ack-policy__category {
+  margin: 1.5rem 0;
+}
+
+.ack-policy__meta,
+.ack-policy__none,
+.ack-policy__powered {
+  color: var(--ack-muted);
+}
+
+.ack-policy .ack-button {
+  width: auto;
+}
