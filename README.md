@@ -138,9 +138,13 @@ For Google Analytics 4 or GTM, add these hosts to your policy:
 
 ```
 script-src  'self' https://www.googletagmanager.com
-connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com
+connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com
 img-src     'self' https://*.google-analytics.com https://www.googletagmanager.com
 ```
+
+List `analytics.google.com` on its own. A wildcard matches subdomains only, and GA4 sends its hits to the bare host. `www.google.com` is the fallback endpoint.
+
+With Google Signals on in GA4, also add `https://*.g.doubleclick.net` to `connect-src` and `img-src`, and `https://www.google.com` to `img-src`. Signals also loads a pixel from country domains (`google.fi`, `google.se`, …). A policy cannot list all of them. If you do not need Signals, turn it off.
 
 Do not add `'unsafe-inline'`. The tool does not need it.
 
