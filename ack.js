@@ -703,7 +703,10 @@
       applyConsent(rec, true);
     } else {
       var stored = readStoredRecord();
-      if (isValid(stored)) applyConsent(stored, false);
+      if (isValid(stored)) {
+        stored.c = normalise(stored.c);
+        applyConsent(stored, false);
+      }
     }
     readyResolve();
 
