@@ -277,6 +277,18 @@
   vertical-align: top;
 }
 
+/* No outer side borders: with border-collapse the outer half-pixels make a
+   full-width table 1px wider than its box, which shows a needless scrollbar. */
+.ack-table tr > :first-child,
+.ack-policy__table tr > :first-child {
+  border-left: 0;
+}
+
+.ack-table tr > :last-child,
+.ack-policy__table tr > :last-child {
+  border-right: 0;
+}
+
 .ack-powered {
   margin: 0;
   font-size: .8em;
