@@ -1,0 +1,16 @@
+{
+  "title": "Evästeet tällä sivustolla",
+  "intro": "Evästeet ovat pieniä tiedostoja, jotka selaimesi tallentaa sivustoa varten. Osa niistä tarvitaan, jotta sivusto toimii. Muilla laskemme käyntejä ja mittaamme mainontaamme. Käytämme niitä vain, jos sallit sen. Voit muuttaa valintaasi milloin tahansa sivun alareunan linkistä.",
+  "acceptAll": "Hyväksy kaikki",
+  "rejectAll": "Hylkää kaikki",
+  "customize": "Valitse evästeet",
+  "save": "Tallenna valinnat",
+  "policyLink": "Lue evästekäytäntö",
+  "categoryAlwaysOn": "Aina päällä",
+  "policyIntro": "Tällä sivulla on kaikki sivuston käyttämät evästeet: kuka ne asettaa, miksi ja kuinka kauan ne säilyvät.",
+  "policyUpdated": "Päivitetty",
+  "policyChange": "Muuta evästevalintojani",
+  "policyNone": "Ei evästeitä",
+  "table": { "name": "Nimi", "provider": "Tarjoaja", "domain": "Verkkotunnus",
+             "purpose": "Tarkoitus", "duration": "Kesto", "setWhen": "Asetetaan" }
+}

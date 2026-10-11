@@ -1,0 +1,16 @@
+{
+  "title": "Cookies on this site",
+  "intro": "Cookies are small files your browser stores for a website. Some are needed to run the site. The others help us count visits and measure our ads. We use those only if you allow them. You can change your choice at any time from the link at the bottom of the page.",
+  "acceptAll": "Accept all",
+  "rejectAll": "Reject all",
+  "customize": "Choose cookies",
+  "save": "Save my choices",
+  "policyLink": "Read the cookie policy",
+  "categoryAlwaysOn": "Always on",
+  "policyIntro": "This page lists every cookie this site uses, who sets it, why, and how long it stays.",
+  "policyUpdated": "Last updated",
+  "policyChange": "Change my cookie choices",
+  "policyNone": "None",
+  "table": { "name": "Name", "provider": "Provider", "domain": "Domain",
+             "purpose": "Purpose", "duration": "Duration", "setWhen": "Set when" }
+}

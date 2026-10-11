@@ -1,0 +1,305 @@
+{
+  "updated": "11.10.2026",
+  "categories": [
+    {
+      "id": "necessary",
+      "required": true,
+      "consentMode": [
+        "security_storage",
+        "functionality_storage"
+      ],
+      "label": {
+        "en": "Necessary",
+        "fi": "Välttämättömät"
+      },
+      "description": {
+        "en": "These cookies make the site work. They remember your cookie choices and keep the site secure. You cannot turn them off.",
+        "fi": "Nämä evästeet pitävät sivuston toiminnassa. Ne muistavat evästevalintasi ja pitävät sivuston turvallisena. Niitä ei voi kytkeä pois päältä."
+      },
+      "cookies": [
+        {
+          "name": "ack_consent",
+          "provider": "{domain}",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Stores your cookie choices, so we do not ask again on every page.",
+            "fi": "Tallentaa evästevalintasi, jotta emme kysy niitä joka sivulla uudelleen."
+          },
+          "duration": {
+            "en": "12 months",
+            "fi": "12 kuukautta"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you make a cookie choice.",
+            "fi": "Kun teet evästevalinnan."
+          }
+        }
+      ]
+    },
+    {
+      "id": "functional",
+      "consentMode": [
+        "personalization_storage"
+      ],
+      "event": "cookie_cat_functional",
+      "label": {
+        "en": "Preferences",
+        "fi": "Toiminnalliset"
+      },
+      "description": {
+        "en": "These cookies remember settings you choose, such as language or region. Without them, some features may not remember you.",
+        "fi": "Nämä evästeet muistavat valitsemasi asetukset, kuten kielen tai alueen. Ilman niitä osa toiminnoista ei muista sinua."
+      },
+      "cookies": []
+    },
+    {
+      "id": "statistic",
+      "consentMode": [
+        "analytics_storage"
+      ],
+      "event": "cookie_cat_statistic",
+      "label": {
+        "en": "Statistics",
+        "fi": "Tilastointi"
+      },
+      "description": {
+        "en": "These cookies count visits and show which pages people use. We see the numbers as totals, not who you are. They help us fix what does not work.",
+        "fi": "Nämä evästeet laskevat käyntejä ja näyttävät, mitä sivuja käytetään. Näemme luvut kokonaismäärinä, emme sitä, kuka olet. Niiden avulla korjaamme sen, mikä ei toimi."
+      },
+      "cookies": [
+        {
+          "name": "_ga",
+          "provider": "Google",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Google Analytics. Tells visits from different browsers apart, so we can count visitors.",
+            "fi": "Google Analytics. Erottaa eri selainten käynnit toisistaan, jotta voimme laskea kävijät."
+          },
+          "duration": {
+            "en": "2 years",
+            "fi": "2 vuotta"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow statistics.",
+            "fi": "Kun sallit tilastoinnin."
+          },
+          "sharedWith": {
+            "en": "Google receives a browser ID and the pages you visit.",
+            "fi": "Google saa selaimen tunnisteen ja tiedon käymistäsi sivuista."
+          }
+        },
+        {
+          "name": "_ga_*",
+          "provider": "Google",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Google Analytics. Keeps track of your current visit.",
+            "fi": "Google Analytics. Pitää kirjaa nykyisestä käynnistäsi."
+          },
+          "duration": {
+            "en": "2 years",
+            "fi": "2 vuotta"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow statistics.",
+            "fi": "Kun sallit tilastoinnin."
+          },
+          "sharedWith": {
+            "en": "Google receives a browser ID and the pages you visit.",
+            "fi": "Google saa selaimen tunnisteen ja tiedon käymistäsi sivuista."
+          }
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "consentMode": [
+        "ad_storage",
+        "ad_user_data",
+        "ad_personalization"
+      ],
+      "event": "cookie_cat_marketing",
+      "label": {
+        "en": "Marketing",
+        "fi": "Markkinointi"
+      },
+      "description": {
+        "en": "These cookies tell ad platforms such as Google and Meta that you visited this site. We use them to see which ads actually bring visitors, and to show our ads to people who have visited before.",
+        "fi": "Nämä evästeet kertovat mainosalustoille, kuten Googlelle ja Metalle, että kävit tällä sivustolla. Näemme niiden avulla, mitkä mainokset oikeasti tuovat kävijöitä. Lisäksi voimme näyttää mainoksiamme ihmisille, jotka ovat käyneet sivustolla aiemmin."
+      },
+      "cookies": [
+        {
+          "name": "_gcl_au",
+          "provider": "Google",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Google Ads. Links your visit to the ads you have seen, so the advertiser can measure results.",
+            "fi": "Google Ads. Yhdistää käyntisi näkemiisi mainoksiin, jotta mainostaja voi mitata tuloksia."
+          },
+          "duration": {
+            "en": "90 days",
+            "fi": "90 päivää"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow marketing.",
+            "fi": "Kun sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Google receives a browser ID and the pages you visit.",
+            "fi": "Google saa selaimen tunnisteen ja tiedon käymistäsi sivuista."
+          }
+        },
+        {
+          "name": "_gcl_aw",
+          "provider": "Google",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Google Ads. Stores the ad click that brought you here, so a purchase or contact can be linked to that ad.",
+            "fi": "Google Ads. Tallentaa mainosklikkauksen, jolla tulit sivustolle. Näin osto tai yhteydenotto voidaan yhdistää mainokseen."
+          },
+          "duration": {
+            "en": "90 days",
+            "fi": "90 päivää"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you arrive from a Google ad and allow marketing.",
+            "fi": "Kun tulet Google-mainoksesta ja sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Google receives a browser ID and the pages you visit.",
+            "fi": "Google saa selaimen tunnisteen ja tiedon käymistäsi sivuista."
+          }
+        },
+        {
+          "name": "IDE",
+          "provider": "Google",
+          "domain": "doubleclick.net",
+          "purpose": {
+            "en": "Google advertising. Shows relevant ads and limits how often you see the same ad.",
+            "fi": "Google-mainonta. Näyttää osuvia mainoksia ja rajoittaa, kuinka usein näet saman mainoksen."
+          },
+          "duration": {
+            "en": "13 months",
+            "fi": "13 kuukautta"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow marketing.",
+            "fi": "Kun sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Google receives a browser ID and the pages you visit.",
+            "fi": "Google saa selaimen tunnisteen ja tiedon käymistäsi sivuista."
+          }
+        },
+        {
+          "name": "test_cookie",
+          "provider": "Google",
+          "domain": "doubleclick.net",
+          "purpose": {
+            "en": "Google advertising. Checks if your browser accepts cookies.",
+            "fi": "Google-mainonta. Tarkistaa, hyväksyykö selaimesi evästeet."
+          },
+          "duration": {
+            "en": "15 minutes",
+            "fi": "15 minuuttia"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow marketing.",
+            "fi": "Kun sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Google receives a browser ID and the pages you visit.",
+            "fi": "Google saa selaimen tunnisteen ja tiedon käymistäsi sivuista."
+          }
+        },
+        {
+          "name": "_fbp",
+          "provider": "Meta",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Meta Pixel. Tells Meta (Facebook, Instagram) that this browser visited the site, to measure and target ads.",
+            "fi": "Meta Pixel. Kertoo Metalle (Facebook, Instagram), että tällä selaimella käytiin sivustolla. Käytetään mainosten mittaamiseen ja kohdentamiseen."
+          },
+          "duration": {
+            "en": "90 days",
+            "fi": "90 päivää"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow marketing.",
+            "fi": "Kun sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Meta receives a browser ID, the pages you visit and actions such as purchases.",
+            "fi": "Meta saa selaimen tunnisteen, tiedon käymistäsi sivuista ja toiminnoista, kuten ostoista."
+          }
+        },
+        {
+          "name": "_fbc",
+          "provider": "Meta",
+          "domain": "{domain}",
+          "purpose": {
+            "en": "Meta Pixel. Stores the ad click that brought you here from Facebook or Instagram.",
+            "fi": "Meta Pixel. Tallentaa mainosklikkauksen, jolla tulit Facebookista tai Instagramista."
+          },
+          "duration": {
+            "en": "90 days",
+            "fi": "90 päivää"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you arrive from a Meta ad and allow marketing.",
+            "fi": "Kun tulet Meta-mainoksesta ja sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Meta receives a browser ID, the pages you visit and actions such as purchases.",
+            "fi": "Meta saa selaimen tunnisteen, tiedon käymistäsi sivuista ja toiminnoista, kuten ostoista."
+          }
+        },
+        {
+          "name": "fr",
+          "provider": "Meta",
+          "domain": "facebook.com",
+          "purpose": {
+            "en": "Meta advertising. Shows and measures ads, and links them to your Meta account if you are logged in.",
+            "fi": "Meta-mainonta. Näyttää ja mittaa mainoksia. Jos olet kirjautunut, yhdistää ne Meta-tiliisi."
+          },
+          "duration": {
+            "en": "90 days",
+            "fi": "90 päivää"
+          },
+          "type": "HTTP cookie",
+          "setWhen": {
+            "en": "When you allow marketing.",
+            "fi": "Kun sallit markkinoinnin."
+          },
+          "sharedWith": {
+            "en": "Meta receives a browser ID, the pages you visit and actions such as purchases.",
+            "fi": "Meta saa selaimen tunnisteen, tiedon käymistäsi sivuista ja toiminnoista, kuten ostoista."
+          }
+        }
+      ]
+    },
+    {
+      "id": "unclassified",
+      "consentMode": [],
+      "event": "cookie_cat_unclassified",
+      "label": {
+        "en": "Unclassified",
+        "fi": "Luokittelemattomat"
+      },
+      "description": {
+        "en": "Cookies we have found but not yet sorted into a category. They stay off until you allow them.",
+        "fi": "Evästeet, jotka olemme löytäneet mutta joita emme ole vielä luokitelleet. Ne pysyvät pois päältä, kunnes sallit ne."
+      },
+      "cookies": []
+    }
+  ]
+}
