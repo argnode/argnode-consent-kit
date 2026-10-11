@@ -144,7 +144,7 @@ img-src     'self' https://*.google-analytics.com https://www.googletagmanager.c
 
 List `analytics.google.com` on its own. A wildcard matches subdomains only, and GA4 sends its hits to the bare host. `www.google.com` is the fallback endpoint.
 
-With Google Signals on in GA4, also add `https://*.g.doubleclick.net` to `connect-src` and `img-src`, and `https://www.google.com` to `img-src`. Signals also loads a pixel from country domains (`google.fi`, `google.se`, …). A policy cannot list all of them. If you do not need Signals, turn it off.
+If the GA4 property is linked to Google Ads with personalised advertising, or Google Signals is on, also add `https://*.g.doubleclick.net` to `connect-src` and `img-src`, and `https://www.google.com` to `img-src`. These requests are sent only for visitors who allow marketing. The audience pixel also goes to the visitor's country Google domain (`google.fi`, `google.se`, …). Add the domains of your main markets to `img-src`. A policy cannot list all of them.
 
 Do not add `'unsafe-inline'`. The tool does not need it.
 
