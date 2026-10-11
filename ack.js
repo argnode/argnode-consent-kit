@@ -440,20 +440,32 @@
     return !!a && !!b && JSON.stringify(normalise(a)) === JSON.stringify(normalise(b));
   }
 
+  function cookiesToDelete(rec) {
+    var keep = {};
+    var drop = [];
+    categories.forEach(function (cat) {
+      if (!isGranted(cat, rec)) return;
+      (cat.cookies || []).forEach(function (k) { keep[k.name] = true; });
+    });
+    categories.forEach(function (cat) {
+      if (isGranted(cat, rec)) return;
+      (cat.cookies || []).forEach(function (k) {
+        if (!keep[k.name] && drop.indexOf(k.name) < 0) drop.push(k.name);
+      });
+    });
+    return drop;
+  }
+
   // ------------------------------------------------------- B9: outbound events
 
   function applyConsent(newRecord, changed) {
-    var previous = record;
     record = newRecord;
 
-    // B10 withdrawal: delete first-party cookies of categories that went from granted to denied.
-    if (previous) {
-      categories.forEach(function (cat) {
-        if (isGranted(cat, previous) && !isGranted(cat, newRecord)) {
-          deleteCookiesMatching((cat.cookies || []).map(function (k) { return k.name; }));
-        }
-      });
-    }
+    // B10 withdrawal: on every apply, delete the first-party cookies that no granted
+    // category lists. A cookie listed in several categories (e.g. an ID used for both
+    // statistics and marketing) stays while any one of them is granted. Running on
+    // page load too also clears a cookie that something set without consent.
+    deleteCookiesMatching(cookiesToDelete(newRecord));
 
     // B9.1, then the page's own hook, then B9.2, then B9.3: tags fired by a
     // category event already see the new consent state and anything the page
