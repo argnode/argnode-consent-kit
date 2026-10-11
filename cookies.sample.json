@@ -13,8 +13,8 @@
         "fi": "Välttämättömät"
       },
       "description": {
-        "en": "These cookies make the site work. They remember your cookie choices and keep the site secure. You cannot turn them off.",
-        "fi": "Nämä evästeet pitävät sivuston toiminnassa. Ne muistavat evästevalintasi ja pitävät sivuston turvallisena. Niitä ei voi kytkeä pois päältä."
+        "en": "The site needs these cookies to work. They hold your cookie choices and the information that keeps the site secure. You cannot turn them off.",
+        "fi": "Sivusto tarvitsee nämä evästeet toimiakseen. Niihin tallennetaan evästevalintasi ja tiedot, joilla sivusto pidetään turvallisena. Niitä ei voi kytkeä pois päältä."
       },
       "cookies": [
         {
@@ -22,8 +22,8 @@
           "provider": "{domain}",
           "domain": "{domain}",
           "purpose": {
-            "en": "Stores your cookie choices, so we do not ask again on every page.",
-            "fi": "Tallentaa evästevalintasi, jotta emme kysy niitä joka sivulla uudelleen."
+            "en": "Holds your cookie choices, so we do not ask again on every page.",
+            "fi": "Sisältää evästevalintasi, jotta emme kysy niitä joka sivulla uudelleen."
           },
           "duration": {
             "en": "12 months",
@@ -48,8 +48,8 @@
         "fi": "Toiminnalliset"
       },
       "description": {
-        "en": "These cookies remember settings you choose, such as language or region. Without them, some features may not remember you.",
-        "fi": "Nämä evästeet muistavat valitsemasi asetukset, kuten kielen tai alueen. Ilman niitä osa toiminnoista ei muista sinua."
+        "en": "These cookies hold settings you choose, such as language or region. Without them, the site cannot remember your settings.",
+        "fi": "Näihin evästeisiin tallennetaan valitsemasi asetukset, kuten kieli tai alue. Ilman niitä sivusto ei muista asetuksiasi."
       },
       "cookies": []
     },
@@ -64,8 +64,8 @@
         "fi": "Tilastointi"
       },
       "description": {
-        "en": "These cookies count visits and show which pages people use. We see the numbers as totals, not who you are. They help us fix what does not work.",
-        "fi": "Nämä evästeet laskevat käyntejä ja näyttävät, mitä sivuja käytetään. Näemme luvut kokonaismäärinä, emme sitä, kuka olet. Niiden avulla korjaamme sen, mikä ei toimi."
+        "en": "We use these cookies to count visits and to see which pages people use. We see the numbers as totals, not who you are. This helps us fix what does not work.",
+        "fi": "Näiden evästeiden avulla lasketaan käyntejä ja nähdään, mitä sivuja käytetään. Näemme luvut kokonaismäärinä emmekä sitä, kuka olet. Niiden avulla korjaamme sen, mikä ei toimi."
       },
       "cookies": [
         {
@@ -73,8 +73,8 @@
           "provider": "Google",
           "domain": "{domain}",
           "purpose": {
-            "en": "Google Analytics. Tells visits from different browsers apart, so we can count visitors.",
-            "fi": "Google Analytics. Erottaa eri selainten käynnit toisistaan, jotta voimme laskea kävijät."
+            "en": "Google Analytics. Holds a random browser ID. It is used to tell visits from different browsers apart, so visitors can be counted.",
+            "fi": "Google Analytics. Sisältää satunnaisen selaintunnisteen. Sen avulla eri selainten käynnit erotetaan toisistaan, jotta kävijät voidaan laskea."
           },
           "duration": {
             "en": "2 years",
@@ -95,8 +95,8 @@
           "provider": "Google",
           "domain": "{domain}",
           "purpose": {
-            "en": "Google Analytics. Keeps track of your current visit.",
-            "fi": "Google Analytics. Pitää kirjaa nykyisestä käynnistäsi."
+            "en": "Google Analytics. Holds information about your current visit, so it is counted as one visit.",
+            "fi": "Google Analytics. Sisältää tiedot nykyisestä käynnistäsi, jotta se lasketaan yhdeksi käynniksi."
           },
           "duration": {
             "en": "2 years",
@@ -127,8 +127,8 @@
         "fi": "Markkinointi"
       },
       "description": {
-        "en": "These cookies tell ad platforms such as Google and Meta that you visited this site. We use them to see which ads actually bring visitors, and to show our ads to people who have visited before.",
-        "fi": "Nämä evästeet kertovat mainosalustoille, kuten Googlelle ja Metalle, että kävit tällä sivustolla. Näemme niiden avulla, mitkä mainokset oikeasti tuovat kävijöitä. Lisäksi voimme näyttää mainoksiamme ihmisille, jotka ovat käyneet sivustolla aiemmin."
+        "en": "We use these cookies to tell ad platforms such as Google and Meta that you visited this site. With them we see which ads actually bring visitors, and we can show our ads to people who have visited before.",
+        "fi": "Näiden evästeiden avulla mainosalustat, kuten Google ja Meta, saavat tiedon käynnistäsi tällä sivustolla. Niiden avulla näemme, mitkä mainokset oikeasti tuovat kävijöitä. Lisäksi voimme näyttää mainoksiamme ihmisille, jotka ovat käyneet sivustolla aiemmin."
       },
       "cookies": [
         {
@@ -136,8 +136,8 @@
           "provider": "Google",
           "domain": "{domain}",
           "purpose": {
-            "en": "Google Ads. Links your visit to the ads you have seen, so the advertiser can measure results.",
-            "fi": "Google Ads. Yhdistää käyntisi näkemiisi mainoksiin, jotta mainostaja voi mitata tuloksia."
+            "en": "Google Ads. Holds an ID that is used to link your visit to the ads you have seen, so the advertiser can measure results.",
+            "fi": "Google Ads. Sisältää tunnisteen, jonka avulla käyntisi yhdistetään näkemiisi mainoksiin. Näin mainostaja voi mitata tuloksia."
           },
           "duration": {
             "en": "90 days",
@@ -158,8 +158,8 @@
           "provider": "Google",
           "domain": "{domain}",
           "purpose": {
-            "en": "Google Ads. Stores the ad click that brought you here, so a purchase or contact can be linked to that ad.",
-            "fi": "Google Ads. Tallentaa mainosklikkauksen, jolla tulit sivustolle. Näin osto tai yhteydenotto voidaan yhdistää mainokseen."
+            "en": "Google Ads. Holds the ad click that brought you here, so a purchase or contact can be linked to that ad.",
+            "fi": "Google Ads. Sisältää mainosklikkauksen, jolla tulit sivustolle. Sen avulla osto tai yhteydenotto voidaan yhdistää mainokseen."
           },
           "duration": {
             "en": "90 days",
@@ -180,8 +180,8 @@
           "provider": "Google",
           "domain": "doubleclick.net",
           "purpose": {
-            "en": "Google advertising. Shows relevant ads and limits how often you see the same ad.",
-            "fi": "Google-mainonta. Näyttää osuvia mainoksia ja rajoittaa, kuinka usein näet saman mainoksen."
+            "en": "Google advertising. Holds an ID that is used to show relevant ads and to limit how often you see the same ad.",
+            "fi": "Google-mainonta. Sisältää tunnisteen, jonka avulla näytetään osuvia mainoksia ja rajoitetaan, kuinka usein näet saman mainoksen."
           },
           "duration": {
             "en": "13 months",
@@ -202,8 +202,8 @@
           "provider": "Google",
           "domain": "doubleclick.net",
           "purpose": {
-            "en": "Google advertising. Checks if your browser accepts cookies.",
-            "fi": "Google-mainonta. Tarkistaa, hyväksyykö selaimesi evästeet."
+            "en": "Google advertising. Used to check if your browser accepts cookies.",
+            "fi": "Google-mainonta. Sen avulla tarkistetaan, hyväksyykö selaimesi evästeet."
           },
           "duration": {
             "en": "15 minutes",
@@ -224,8 +224,8 @@
           "provider": "Meta",
           "domain": "{domain}",
           "purpose": {
-            "en": "Meta Pixel. Tells Meta (Facebook, Instagram) that this browser visited the site, to measure and target ads.",
-            "fi": "Meta Pixel. Kertoo Metalle (Facebook, Instagram), että tällä selaimella käytiin sivustolla. Käytetään mainosten mittaamiseen ja kohdentamiseen."
+            "en": "Meta Pixel. Holds a browser ID. It is used to tell Meta (Facebook, Instagram) that this browser visited the site, and to measure and target ads.",
+            "fi": "Meta Pixel. Sisältää selaintunnisteen. Sen avulla Meta (Facebook, Instagram) saa tiedon, että tällä selaimella käytiin sivustolla. Tietoa käytetään mainosten mittaamiseen ja kohdentamiseen."
           },
           "duration": {
             "en": "90 days",
@@ -246,8 +246,8 @@
           "provider": "Meta",
           "domain": "{domain}",
           "purpose": {
-            "en": "Meta Pixel. Stores the ad click that brought you here from Facebook or Instagram.",
-            "fi": "Meta Pixel. Tallentaa mainosklikkauksen, jolla tulit Facebookista tai Instagramista."
+            "en": "Meta Pixel. Holds the ad click that brought you here from Facebook or Instagram.",
+            "fi": "Meta Pixel. Sisältää mainosklikkauksen, jolla tulit Facebookista tai Instagramista."
           },
           "duration": {
             "en": "90 days",
@@ -268,8 +268,8 @@
           "provider": "Meta",
           "domain": "facebook.com",
           "purpose": {
-            "en": "Meta advertising. Shows and measures ads, and links them to your Meta account if you are logged in.",
-            "fi": "Meta-mainonta. Näyttää ja mittaa mainoksia. Jos olet kirjautunut, yhdistää ne Meta-tiliisi."
+            "en": "Meta advertising. Used to show and measure ads, and to link them to your Meta account if you are logged in.",
+            "fi": "Meta-mainonta. Sen avulla mainoksia näytetään ja mitataan. Jos olet kirjautunut, ne yhdistetään Meta-tiliisi."
           },
           "duration": {
             "en": "90 days",
