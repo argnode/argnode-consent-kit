@@ -253,6 +253,12 @@
   font-size: .85em;
 }
 
+/* Seven columns do not fit a narrow dialog: scroll sideways instead of
+   squeezing the purpose text into a one-word column. */
+.ack-table {
+  min-width: 40rem;
+}
+
 .ack-table th,
 .ack-table td,
 .ack-policy__table th,
