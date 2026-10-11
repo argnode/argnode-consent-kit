@@ -409,9 +409,13 @@
     return null;
   }
 
+  // A category with no cookies in the list is not shown, so it can never be granted:
+  // Accept all must not grant (or fire tags for) something the visitor never saw.
   function normalise(c) {
     var out = {};
-    optionalCategories().forEach(function (cat) { out[cat.id] = !!(c && c[cat.id]); });
+    optionalCategories().forEach(function (cat) {
+      out[cat.id] = !!(c && c[cat.id]) && (cat.cookies || []).length > 0;
+    });
     return out;
   }
 
