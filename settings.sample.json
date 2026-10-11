@@ -22,11 +22,23 @@
     "path": "/",
     "sameSite": "Lax"
   },
+  "identity": {
+    "enabled": false,
+    "cookieName": "ack_uid",
+    "maxAgeDays": 365,
+    "category": "statistic",
+    "dataLayerKey": "user_id",
+    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  },
   "banner": {
-    "showPoweredBy": true,
+    "attribution": "text",
+    "attributionLogo": "on-light",
     "poweredByText": "Powered by argnode",
     "poweredByUrl": null,
-    "policyUrl": { "en": "/cookie-policy", "fi": "/evastekaytanto" }
+    "policyUrl": {
+      "en": "/cookie-policy",
+      "fi": "/evastekaytanto"
+    }
   },
   "bots": {
     "skip": true,

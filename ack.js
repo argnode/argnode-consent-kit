@@ -26,13 +26,20 @@
     consentMode: { waitForUpdate: 500, urlPassthrough: true, adsDataRedaction: true },
     language: { source: 'html', fixed: null, fallback: 'en' },
     storage: { cookieName: 'ack_consent', maxAgeDays: 365, domain: 'auto', path: '/', sameSite: 'Lax' },
-    banner: { showPoweredBy: true, poweredByText: 'Powered by argnode', poweredByUrl: null, policyUrl: null },
+    // attribution: 'text' (default) | 'logo' (top-right, hidden on small screens) | 'none'.
+    // attributionLogo: 'on-light' (dark wordmark, for light banners) | 'on-dark'.
+    banner: { attribution: 'text', attributionLogo: 'on-light', poweredByText: 'Powered by argnode',
+      poweredByUrl: null, policyUrl: null },
+    // B6.1: a pseudonymous user ID from a URL parameter, stored only with consent.
+    identity: { enabled: false, cookieName: 'ack_uid', maxAgeDays: 365, category: 'statistic', dataLayerKey: 'user_id',
+      pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' },
     bots: { skip: true, pattern: null },
     css: true,
     customCss: false,
     customTexts: []
   };
 
+  var ATTRIBUTION_HOST = 'argnode.com';
   var POWERED_BY_PAGES = {
     en: 'https://www.argnode.com/en/services/analytics',
     fi: 'https://www.argnode.com/fi/palvelut/analytiikka'
@@ -123,6 +130,24 @@
     dataLayer.push(arguments);
   }
   if (dataLayerName === 'dataLayer' && typeof window.gtag !== 'function') window.gtag = gtag;
+
+  // ------------------------------------- 2b. user ID from the URL (B6.1)
+
+  // Read and remove the parameter at once, before GTM or gtag can load and record
+  // the page URL with the ID in it. The value is kept in memory only: it is
+  // stored as a cookie later, and only if the visitor allows its category.
+  var identityParam = attr('identity-param');
+  var urlUserId = null;
+  if (identityParam && window.URL && window.history && history.replaceState) {
+    try {
+      var pageUrl = new URL(location.href);
+      if (pageUrl.searchParams.has(identityParam)) {
+        urlUserId = (pageUrl.searchParams.get(identityParam) || '').toLowerCase();
+        pageUrl.searchParams.delete(identityParam);
+        history.replaceState(history.state, '', pageUrl.pathname + pageUrl.search + pageUrl.hash);
+      }
+    } catch (e) { /* malformed URL: no ID */ }
+  }
 
   // ------------------------------------------------ 3. Consent Mode default
 
@@ -434,8 +459,10 @@
       });
     }
 
-    // B9.1, then B9.2, then B9.3: tags fired by a category event already see the new state.
+    // B9.1, then the user ID, then B9.2, then B9.3: tags fired by a category
+    // event already see the new consent state and the user ID.
     gtag('consent', 'update', signalsFor(newRecord));
+    applyIdentity(newRecord);
 
     categories.forEach(function (cat) {
       if (!cat.event || !isGranted(cat, newRecord) || firedEvents[cat.event]) return;
@@ -455,6 +482,48 @@
     }
   }
 
+  // B6.1. The ID cookie value is "<id>.<source>": "login" when a logged-in system
+  // (e.g. a customer portal on the same main domain) set it, "link" when it came
+  // from a URL. A link never replaces a login ID: links get forwarded, logins do not.
+  var identityPushed = false;
+
+  function identityCategory() {
+    var id = settings.identity && settings.identity.category;
+    for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
+    return null;
+  }
+
+  function applyIdentity(rec) {
+    var conf = settings.identity;
+    var cat = identityCategory();
+    if (!conf || !conf.enabled || !cat) return;
+    if (!isGranted(cat, rec)) {
+      deleteCookie(conf.cookieName); // no consent, no ID; withdrawal also deletes it
+      return;
+    }
+    var stored = readCookie(conf.cookieName) || '';
+    var dot = stored.lastIndexOf('.');
+    var storedId = dot > 0 ? stored.slice(0, dot) : '';
+    var storedSrc = dot > 0 ? stored.slice(dot + 1) : '';
+    var valid = new RegExp(conf.pattern, 'i');
+    var id = valid.test(storedId) ? storedId : null;
+    if (urlUserId && valid.test(urlUserId) && !(id && storedSrc === 'login')) {
+      id = urlUserId;
+      writeCookie(conf.cookieName, id + '.link', { path: settings.storage.path, sameSite: settings.storage.sameSite,
+        maxAgeDays: conf.maxAgeDays, domain: settings.storage.domain });
+    } else if (id) {
+      // Rewrite with the same value to renew the lifetime on each consented visit.
+      writeCookie(conf.cookieName, stored, { path: settings.storage.path, sameSite: settings.storage.sameSite,
+        maxAgeDays: conf.maxAgeDays, domain: settings.storage.domain });
+    }
+    if (id && !identityPushed) {
+      identityPushed = true;
+      var push = {};
+      push[conf.dataLayerKey] = id;
+      dataLayer.push(push);
+    }
+  }
+
   function saveChoice(c, src) {
     var rec = { v: version, ts: nowSeconds(), c: normalise(c), src: src };
     writeCookie(settings.storage.cookieName, encodeURIComponent(JSON.stringify(rec)), settings.storage);
@@ -463,17 +532,34 @@
 
   // ----------------------------------------------------------- B10: banner
 
+  function attribution() {
+    if (settings.banner.showPoweredBy === false) return 'none'; // setting name before 0.2
+    var a = settings.banner.attribution;
+    return a === 'logo' || a === 'none' ? a : 'text';
+  }
+
   function poweredByHref(surface) {
     if (settings.banner.poweredByUrl) return settings.banner.poweredByUrl;
     var page = POWERED_BY_PAGES[lang] || POWERED_BY_PAGES.en;
-    return page + '?utm_source=' + encodeURIComponent(location.hostname.toLowerCase()) +
+    var host = location.hostname.toLowerCase();
+    // No UTM tags on Argnode's own site: a tagged internal link would restart the session.
+    if (host === ATTRIBUTION_HOST || host.slice(-ATTRIBUTION_HOST.length - 1) === '.' + ATTRIBUTION_HOST) return page;
+    return page + '?utm_source=' + encodeURIComponent(host) +
       '&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=' + surface;
   }
 
   function poweredByHtml(surface, cls) {
-    if (!settings.banner.showPoweredBy) return '';
+    if (attribution() === 'none') return '';
     return '<p class="' + cls + '"><a class="' + cls + '__link" href="' + escapeHtml(poweredByHref(surface)) +
       '" rel="noopener" target="_blank">' + escapeHtml(settings.banner.poweredByText) + '</a></p>';
+  }
+
+  function logoHtml() {
+    if (attribution() !== 'logo') return '';
+    var file = settings.banner.attributionLogo === 'on-dark' ? 'on-dark' : 'on-light';
+    return '<a class="ack-banner__logo" href="' + escapeHtml(poweredByHref('banner')) + '" rel="noopener" target="_blank">' +
+      '<img src="' + escapeHtml(baseUrl + 'assets/argnode-wordmark-' + file + '.svg') + '" alt="' +
+      escapeHtml(settings.banner.poweredByText) + '" width="110" height="15"></a>';
   }
 
   function cookieTableHtml(cat, cls) {
@@ -519,19 +605,24 @@
     var cats = categories.filter(function (c) { return c.required || (c.cookies || []).length; });
     return '<dialog class="ack-banner' + (showCategories ? ' ack-banner--expanded' : '') + '" id="ack-banner" aria-labelledby="ack-title" lang="' + escapeHtml(lang) + '">' +
       '<form class="ack-banner__inner" method="dialog">' +
+      '<div class="ack-banner__header">' +
       '<h2 class="ack-banner__title" id="ack-title" tabindex="-1">' + escapeHtml(texts.title) + '</h2>' +
+      logoHtml() + '</div>' +
       '<p class="ack-banner__intro">' + escapeHtml(texts.intro) +
       (policy ? ' <a class="ack-banner__policy-link" href="' + escapeHtml(policy) + '">' + escapeHtml(texts.policyLink) + '</a>' : '') +
       '</p>' +
       '<div class="ack-categories"' + (showCategories ? '' : ' hidden') + '>' +
       cats.map(function (c) { return categoryHtml(c, current); }).join('') + '</div>' +
+      // Visual order = DOM order = tab order. The default action is always last,
+      // in the bottom-right corner: Accept on the first layer, Save once the
+      // categories are open. Accept and Reject sit side by side, equal size.
       '<div class="ack-actions">' +
-      '<button type="button" class="ack-button ack-button--accept" data-ack-action="accept">' + escapeHtml(texts.acceptAll) + '</button>' +
-      '<button type="button" class="ack-button ack-button--reject" data-ack-action="reject">' + escapeHtml(texts.rejectAll) + '</button>' +
       '<button type="button" class="ack-button ack-button--customize" data-ack-action="customize"' + (showCategories ? ' hidden' : '') + '>' + escapeHtml(texts.customize) + '</button>' +
+      '<button type="button" class="ack-button ack-button--reject" data-ack-action="reject">' + escapeHtml(texts.rejectAll) + '</button>' +
+      '<button type="button" class="ack-button ack-button--accept" data-ack-action="accept">' + escapeHtml(texts.acceptAll) + '</button>' +
       '<button type="button" class="ack-button ack-button--save" data-ack-action="save"' + (showCategories ? '' : ' hidden') + '>' + escapeHtml(texts.save) + '</button>' +
       '</div>' +
-      poweredByHtml('banner', 'ack-powered') +
+      (attribution() === 'text' ? poweredByHtml('banner', 'ack-powered') : '') +
       '</form></dialog>';
   }
 
@@ -695,6 +786,12 @@
     if (settings.loader.mode === 'gtm') startLoader('gtm', settings.loader.gtmId);
     else if (settings.loader.mode === 'gtag') startLoader('gtag', settings.loader.gtagId);
     if (settings.customCss) addStylesheet(baseUrl + 'custom.css');
+    if (settings.identity.enabled) {
+      var idCat = identityCategory();
+      var listed = idCat && (idCat.cookies || []).some(function (k) { return k.name === settings.identity.cookieName; });
+      if (!listed) warn('identity is enabled, but cookie "' + settings.identity.cookieName + '" is not listed in category "' +
+        settings.identity.category + '" of the cookie list. List it, so visitors are told about it.');
+    }
 
     // B8: external source, then the local cookie, then the banner.
     var external = readExternalRecord();

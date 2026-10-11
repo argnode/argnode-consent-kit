@@ -80,6 +80,36 @@
   padding: 1.5rem;
 }
 
+.ack-banner__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ack-gap);
+}
+
+.ack-banner__logo {
+  flex: none;
+  display: block;
+  line-height: 0;
+  opacity: .8;
+}
+
+.ack-banner__logo:hover {
+  opacity: 1;
+}
+
+.ack-banner__logo img {
+  width: 110px;
+  height: auto;
+}
+
+/* The logo is attribution, not content: on a small screen the space is for the choice. */
+@media (max-width: 30rem) {
+  .ack-banner__logo {
+    display: none;
+  }
+}
+
 .ack-banner__title {
   margin: 0;
   font-size: 1.25em;

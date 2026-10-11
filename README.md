@@ -101,6 +101,27 @@ Accept and Reject use the same variables by default. Equal prominence is a compl
 
 All classes start with `ack-`. Nothing in `ack.css` targets elements outside `.ack-banner` and `.ack-policy`.
 
+## Attribution
+
+`settings.json` → `banner.attribution`:
+
+| Value | Effect |
+|---|---|
+| `text` | A small "Powered by argnode" link under the buttons. This is the default. |
+| `logo` | The argnode wordmark in the top-right corner of the banner. It is hidden on small screens. Set `attributionLogo` to `on-light` for a light banner or `on-dark` for a dark banner. |
+| `none` | No attribution. |
+
+## User ID (optional)
+
+You can send a pseudonymous user ID (for example a CRM user ID) to Google Analytics 4 as `user_id`. The tool stores it only if the visitor allows statistics.
+
+1. Set `"identity": { "enabled": true }` in `settings.json`.
+2. List `ack_uid` in the `statistic` category of `cookies.json`.
+3. To read the ID from links such as `?uid=<id>`, add `data-identity-param="uid"` to the script tag. The tool removes the parameter from the address bar before analytics loads.
+4. In GTM, make a Data Layer Variable `user_id`. Set it as the `user_id` parameter of your Google tag.
+
+Only IDs that match `identity.pattern` (default: a UUID) are used. Do not use an email address or a name as the ID. Read section B6.1 of the [design](docs/DESIGN.md) for the limits.
+
 ## Change the texts
 
 Default texts are in `i18n/<language>.json`. Do not edit them, because a pull overwrites them. Put only the keys that you change in `i18n/custom/<language>.json`, and add the language to `customTexts` in `settings.json`:
