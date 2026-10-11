@@ -4,7 +4,7 @@ Free, open-source, self-hosted consent management platform (CMP) with native Goo
 
 Made by [Argnode Oy](https://www.argnode.com).
 
-Status: version 0.3. The design is in [docs/DESIGN.md](docs/DESIGN.md).
+Status: version 0.4. The design is in [docs/DESIGN.md](docs/DESIGN.md).
 
 ## What it does
 
@@ -111,26 +111,18 @@ All classes start with `ack-`. Nothing in `ack.css` targets elements outside `.a
 | `logo` | The argnode wordmark in the top-right corner of the banner. It is hidden on small screens. Set `attributionLogo` to `on-light` for a light banner or `on-dark` for a dark banner. |
 | `none` | No attribution. |
 
-## User ID (optional)
+## Page options
 
-You can send a pseudonymous user ID (for example a CRM user ID) to Google Analytics 4 as `user_id`. The tool stores it only if the visitor allows statistics.
+A script on your page can set `window.ackOptions` before `ack.js` loads. Use it to connect the banner to your own system, for example a CRM:
 
-1. Set `"identity": { "enabled": true }` in `settings.json`. `identity.categories` lists the categories that must all be allowed (default: `statistic`).
-2. List `ack_uid` in one of those categories in `cookies.json`.
-3. To read the ID from links such as `?uid=<id>`, add `data-identity-param="uid"` to the script tag. The tool removes the parameter from the address bar before analytics loads.
-4. In GTM, make a Data Layer Variable `user_id`. Set it as the `user_id` parameter of your Google tag.
+| Option | Effect |
+|---|---|
+| `consent` | Preset consent `{ c: { statistic: true } }`, or a Promise for it. The banner is not shown. |
+| `consentTimeoutMs` | How long to wait for a `consent` Promise. Default 2000. |
+| `hideCategories` | Category IDs not to show in the banner for this page view. |
+| `beforeCategoryEvents(record)` | Runs after the Consent Mode update and before the category events. Push data that your tags need here. |
 
-Only IDs that match `identity.pattern` (default: a UUID) are used. Do not use an email address or a name as the ID. Read section B6.1 of the [design](docs/DESIGN.md) for the limits.
-
-## Extensions
-
-To connect the banner to your own system (for example a CRM), write a small script, put it in `extensions/` in the tool folder, and list it in `settings.json`:
-
-```json
-{ "extensions": ["extensions/my-crm.js"] }
-```
-
-The script calls `ack.use({ name, resolve, onConsent })`. Read section B9.4 of the [design](docs/DESIGN.md). The `extensions/` folder is in `.gitignore`.
+To save a choice in your own system, listen to `ack:consent` and use only events with `src: "banner"`. Read section B9.4 of the [design](docs/DESIGN.md).
 
 ## Change the texts
 

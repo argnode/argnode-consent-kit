@@ -30,20 +30,14 @@
     // attributionLogo: 'on-light' (dark wordmark, for light banners) | 'on-dark'.
     banner: { attribution: 'text', attributionLogo: 'on-light', poweredByText: 'Powered by argnode',
       poweredByUrl: null, policyUrl: null },
-    // B6.1: a pseudonymous user ID from a URL parameter, stored only with consent.
-    // The ID is used only when ALL categories in `categories` are granted.
-    identity: { enabled: false, cookieName: 'ack_uid', maxAgeDays: 365, categories: ['statistic'], dataLayerKey: 'user_id',
-      pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' },
     bots: { skip: true, pattern: null },
     css: true,
     customCss: false,
-    customTexts: [],
-    // B9.4: site scripts in this folder that connect the tool to the site's own
-    // systems (e.g. a CRM). Loaded after settings; their answer is awaited at most
-    // extensionTimeoutMs before the tool falls back to the cookie or the banner.
-    extensions: [],
-    extensionTimeoutMs: 2000
+    customTexts: []
   };
+
+  // B9.4: options a page script may set before ack.js loads (window.ackOptions).
+  var pageOptions = window.ackOptions || {};
 
   var ATTRIBUTION_HOST = 'argnode.com';
   var POWERED_BY_PAGES = {
@@ -136,24 +130,6 @@
     dataLayer.push(arguments);
   }
   if (dataLayerName === 'dataLayer' && typeof window.gtag !== 'function') window.gtag = gtag;
-
-  // ------------------------------------- 2b. user ID from the URL (B6.1)
-
-  // Read and remove the parameter at once, before GTM or gtag can load and record
-  // the page URL with the ID in it. The value is kept in memory only: it is
-  // stored as a cookie later, and only if the visitor allows its category.
-  var identityParam = attr('identity-param');
-  var urlUserId = null;
-  if (identityParam && window.URL && window.history && history.replaceState) {
-    try {
-      var pageUrl = new URL(location.href);
-      if (pageUrl.searchParams.has(identityParam)) {
-        urlUserId = (pageUrl.searchParams.get(identityParam) || '').toLowerCase();
-        pageUrl.searchParams.delete(identityParam);
-        history.replaceState(history.state, '', pageUrl.pathname + pageUrl.search + pageUrl.hash);
-      }
-    } catch (e) { /* malformed URL: no ID */ }
-  }
 
   // ------------------------------------------------ 3. Consent Mode default
 
@@ -330,9 +306,7 @@
   var listeners = [];
   var dialog = null;
   var choiceMade = false;
-  var userId = null;       // pseudonymous ID for this visit (B6.1), or null
   var textVersion = null;  // hash of the texts shown in the banner, stored with the choice
-  var extensions = [];     // registered with ack.use() (B9.4)
   var readyResolve;
   var ready = new Promise(function (r) { readyResolve = r; });
 
@@ -341,11 +315,11 @@
   }
 
   // Shown in the banner, and so grantable: necessary always; others only if they
-  // list cookies. An `identityOnly` category is shown only to a visitor with an ID.
+  // list cookies and the page has not hidden them (ackOptions.hideCategories).
   function isShown(cat) {
     if (cat.required) return true;
     if (!(cat.cookies || []).length) return false;
-    return !cat.identityOnly || !!userId;
+    return (pageOptions.hideCategories || []).indexOf(cat.id) < 0;
   }
 
   function isGranted(cat, rec) {
@@ -481,10 +455,14 @@
       });
     }
 
-    // B9.1, then the user ID, then B9.2, then B9.3: tags fired by a category
-    // event already see the new consent state and the user ID.
+    // B9.1, then the page's own hook, then B9.2, then B9.3: tags fired by a
+    // category event already see the new consent state and anything the page
+    // pushed in its hook (for example a user ID).
     gtag('consent', 'update', signalsFor(newRecord));
-    applyIdentity(newRecord);
+    if (typeof pageOptions.beforeCategoryEvents === 'function') {
+      try { pageOptions.beforeCategoryEvents(JSON.parse(JSON.stringify(newRecord))); }
+      catch (e) { warn('ackOptions.beforeCategoryEvents threw: ' + e.message); }
+    }
 
     categories.forEach(function (cat) {
       if (!cat.event || !isGranted(cat, newRecord) || firedEvents[cat.event]) return;
@@ -495,13 +473,6 @@
     if (changed) {
       var detail = { v: newRecord.v, t: newRecord.t, ts: newRecord.ts, c: newRecord.c, src: newRecord.src };
       dataLayer.push({ event: 'ack_consent_update', ack: detail });
-      // B9.4: extensions see the choice with the button that made it; `action` is
-      // set only for a real banner action, never for a consent read on page load.
-      var extDetail = merge(detail, { action: newRecord.action || null });
-      extensions.forEach(function (ext) {
-        if (typeof ext.onConsent !== 'function') return;
-        try { ext.onConsent(extDetail, extensionContext()); } catch (e) { warn('Extension ' + (ext.name || '') + ': ' + e.message); }
-      });
       try {
         document.dispatchEvent(new CustomEvent('ack:consent', { detail: detail }));
       } catch (e) { /* very old browser: the dataLayer event is enough */ }
@@ -511,106 +482,10 @@
     }
   }
 
-  // B6.1. The ID comes from the URL parameter if there is a valid one, else from
-  // the ID cookie (which a logged-in system on the same main domain may also set).
-  // It is stored and sent only while every category in identity.categories is granted.
-  var identityPushed = false;
-
-  function identityCategories() {
-    var conf = settings.identity || {};
-    var ids = conf.categories || (conf.category ? [conf.category] : []); // `category`: setting name in 0.2
-    return categories.filter(function (c) { return ids.indexOf(c.id) >= 0; });
-  }
-
-  function findUserId() {
-    var conf = settings.identity;
-    if (!conf || !conf.enabled) return null;
-    var valid = new RegExp(conf.pattern, 'i');
-    if (urlUserId && valid.test(urlUserId)) return urlUserId;
-    var stored = (readCookie(conf.cookieName) || '').toLowerCase().replace(/\.(login|link)$/, ''); // 0.2 wrote a suffix
-    return valid.test(stored) ? stored : null;
-  }
-
-  function identityCookieOptions() {
-    return { path: settings.storage.path, sameSite: settings.storage.sameSite,
-      maxAgeDays: settings.identity.maxAgeDays, domain: settings.storage.domain };
-  }
-
-  function applyIdentity(rec) {
-    var conf = settings.identity;
-    var cats = identityCategories();
-    if (!conf || !conf.enabled || !cats.length) return;
-    var granted = cats.every(function (cat) { return isGranted(cat, rec); });
-    if (!granted) {
-      deleteCookie(conf.cookieName); // no consent, no ID; withdrawal also deletes it
-      return;
-    }
-    if (!userId) return;
-    // Written on every consented visit: stores a ?uid= landing and renews the lifetime.
-    writeCookie(conf.cookieName, userId, identityCookieOptions());
-    if (!identityPushed) {
-      identityPushed = true;
-      var push = {};
-      push[conf.dataLayerKey] = userId;
-      dataLayer.push(push);
-    }
-  }
-
-  // ---------------------------------------------------------- B9.4: extensions
-
-  function extensionContext() {
-    return {
-      userId: userId,
-      version: version,
-      textVersion: textVersion,
-      lang: lang,
-      categories: categories,
-      shownCategoryIds: function () {
-        return optionalCategories().filter(isShown).map(function (c) { return c.id; });
-      },
-      signalsFor: function (c) { return signalsFor({ c: c }); },
-      forgetUserId: function () {
-        deleteCookie(settings.identity.cookieName);
-        userId = null;
-      }
-    };
-  }
-
-  function loadExtensions() {
-    return Promise.all((settings.extensions || []).map(function (path) {
-      return new Promise(function (resolve) {
-        var s = document.createElement('script');
-        s.src = baseUrl + path;
-        s.onload = s.onerror = function () { resolve(); };
-        document.head.appendChild(s);
-      });
-    }));
-  }
-
-  // The first extension that answers with a choice ({ c: {...} }) wins; null means no answer.
-  function askExtensions() {
-    if (!extensions.length) return Promise.resolve(null);
-    var ctx = extensionContext();
-    var asks = extensions.map(function (ext) {
-      if (typeof ext.resolve !== 'function') return Promise.resolve(null);
-      return Promise.resolve().then(function () { return ext.resolve(ctx); }).catch(function (e) {
-        warn('Extension ' + (ext.name || '') + ': ' + (e && e.message));
-        return null;
-      });
-    });
-    var timeout = new Promise(function (resolve) { setTimeout(function () { resolve([]); }, settings.extensionTimeoutMs); });
-    return Promise.race([Promise.all(asks), timeout]).then(function (answers) {
-      for (var i = 0; i < answers.length; i++) if (answers[i] && isPlainObject(answers[i].c)) return answers[i];
-      return null;
-    });
-  }
-
-  function saveChoice(c, src, action) {
+  function saveChoice(c, src) {
     var rec = { v: version, t: textVersion, ts: nowSeconds(), c: normalise(c), src: src };
     writeCookie(settings.storage.cookieName, encodeURIComponent(JSON.stringify(rec)), settings.storage);
-    rec.action = action; // for extensions only; not stored
     applyConsent(rec, true);
-    delete rec.action;
   }
 
   // ----------------------------------------------------------- B10: banner
@@ -734,15 +609,15 @@
       if (firstToggle) firstToggle.focus();
       return;
     }
-    if (action === 'accept') saveChoice(all, 'banner', 'accept');
-    else if (action === 'reject') saveChoice({}, 'banner', 'reject');
+    if (action === 'accept') saveChoice(all, 'banner');
+    else if (action === 'reject') saveChoice({}, 'banner');
     else if (action === 'save') {
       var c = {};
       optionalCategories().forEach(function (cat) {
         var input = dialog.querySelector('input[name="' + cat.id + '"]');
         c[cat.id] = !!(input && input.checked);
       });
-      saveChoice(c, 'banner', 'save');
+      saveChoice(c, 'banner');
     }
     closeBanner();
   }
@@ -827,8 +702,6 @@
     getConsent: function () { return record ? JSON.parse(JSON.stringify(record)) : null; },
     on: function (name, fn) { if (name === 'consent' && typeof fn === 'function') listeners.push(fn); },
     renderPolicy: renderPolicy,
-    // B9.4: register an extension { name, resolve(ctx), onConsent(detail, ctx) }.
-    use: function (ext) { if (ext) extensions.push(ext); },
     reset: function () {
       return ready.then(ensureTexts).then(function () {
         deleteCookie(settings.storage.cookieName);
@@ -871,24 +744,20 @@
     if (settings.loader.mode === 'gtm') startLoader('gtm', settings.loader.gtmId);
     else if (settings.loader.mode === 'gtag') startLoader('gtag', settings.loader.gtagId);
     if (settings.customCss) addStylesheet(baseUrl + 'custom.css');
-    userId = findUserId();
-    if (settings.identity.enabled) {
-      var listed = identityCategories().some(function (cat) {
-        return (cat.cookies || []).some(function (k) { return k.name === settings.identity.cookieName; });
-      });
-      if (!listed) warn('identity is enabled, but cookie "' + settings.identity.cookieName + '" is not listed ' +
-        'in any of identity.categories. List it, so visitors are told about it.');
-    }
+    // B9.4: a page may preset the consent, also as a promise (e.g. a CRM lookup).
+    // Wait for it at most consentTimeoutMs; no answer means no preset.
+    var timeout = new Promise(function (resolve) {
+      setTimeout(function () { resolve(null); }, pageOptions.consentTimeoutMs || 2000);
+    });
+    return Promise.race([Promise.resolve(pageOptions.consent).catch(function () { return null; }), timeout]);
+  }).then(function (preset) {
+    if (preset === 'bot') return;
 
-    return loadExtensions().then(askExtensions);
-  }).then(function (fromExtension) {
-    if (fromExtension === 'bot') return;
-
-    // B8: external source (dataLayer push, then an extension), then the local cookie, then the banner.
+    // B8: external source (dataLayer push, then the page preset), then the local cookie, then the banner.
     var stored = readStoredRecord();
     if (isValid(stored)) stored.c = normalise(stored.c);
     var pushed = readExternalRecord();
-    var external = pushed && pushed.v === version ? pushed : fromExtension;
+    var external = pushed && pushed.v === version ? pushed : (preset && isPlainObject(preset.c) ? preset : null);
     if (external) {
       var rec = { v: version, ts: external.ts || nowSeconds(), c: normalise(external.c), src: 'external' };
       var changed = !(isValid(stored) && sameChoice(stored.c, rec.c));

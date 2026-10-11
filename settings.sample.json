@@ -22,16 +22,6 @@
     "path": "/",
     "sameSite": "Lax"
   },
-  "identity": {
-    "enabled": false,
-    "cookieName": "ack_uid",
-    "maxAgeDays": 365,
-    "categories": [
-      "statistic"
-    ],
-    "dataLayerKey": "user_id",
-    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-  },
   "banner": {
     "attribution": "text",
     "attributionLogo": "on-light",
@@ -47,7 +37,5 @@
     "pattern": null
   },
   "customCss": false,
-  "customTexts": [],
-  "extensions": [],
-  "extensionTimeoutMs": 2000
+  "customTexts": []
 }
