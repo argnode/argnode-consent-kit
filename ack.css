@@ -18,6 +18,7 @@
   --ack-rule: #ddd;
   --ack-radius: 4px;
   --ack-max-width: 40rem;
+  --ack-max-width-expanded: 64rem; /* when the categories are open: room for the cookie table */
   --ack-gap: 1rem;
   --ack-backdrop: rgb(0 0 0 / .5);
   --ack-focus: #0a58ca;
@@ -57,6 +58,10 @@
   line-height: 1.5;
 }
 
+.ack-banner--expanded {
+  max-width: var(--ack-max-width-expanded);
+}
+
 .ack-banner::backdrop {
   background: var(--ack-backdrop);
 }
@@ -81,10 +86,6 @@
   line-height: 1.3;
 }
 
-.ack-banner__title:focus {
-  outline: none;
-}
-
 .ack-banner__intro {
   margin: 0;
 }
@@ -97,6 +98,13 @@
 .ack-policy :focus-visible {
   outline: 2px solid var(--ack-focus);
   outline-offset: 2px;
+}
+
+/* The title gets focus only so a screen reader starts reading there. It is not
+   a control, so it shows no focus ring (it comes after the rule above on purpose). */
+.ack-banner .ack-banner__title:focus,
+.ack-banner .ack-banner__title:focus-visible {
+  outline: none;
 }
 
 /* ---------------------------------------------------------------- buttons */

@@ -517,7 +517,7 @@
     var policy = policyUrl();
     // Categories with no cookies are not shown in the banner (B3.2), necessary always is.
     var cats = categories.filter(function (c) { return c.required || (c.cookies || []).length; });
-    return '<dialog class="ack-banner" id="ack-banner" aria-labelledby="ack-title" lang="' + escapeHtml(lang) + '">' +
+    return '<dialog class="ack-banner' + (showCategories ? ' ack-banner--expanded' : '') + '" id="ack-banner" aria-labelledby="ack-title" lang="' + escapeHtml(lang) + '">' +
       '<form class="ack-banner__inner" method="dialog">' +
       '<h2 class="ack-banner__title" id="ack-title" tabindex="-1">' + escapeHtml(texts.title) + '</h2>' +
       '<p class="ack-banner__intro">' + escapeHtml(texts.intro) +
@@ -553,6 +553,7 @@
 
     if (action === 'customize') {
       dialog.querySelector('.ack-categories').hidden = false;
+      dialog.classList.add('ack-banner--expanded');
       btn.hidden = true;
       dialog.querySelector('.ack-button--save').hidden = false;
       var firstToggle = dialog.querySelector('.ack-switch__input:not([disabled])');
