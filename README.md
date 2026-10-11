@@ -4,7 +4,7 @@ Free, open-source, self-hosted consent management platform (CMP) with native Goo
 
 Made by [Argnode Oy](https://www.argnode.com).
 
-Status: version 0.4. The design is in [docs/DESIGN.md](docs/DESIGN.md).
+Status: version 0.4.0, in production on [argnode.com](https://www.argnode.com). The design is in [docs/DESIGN.md](docs/DESIGN.md), the changes in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it does
 

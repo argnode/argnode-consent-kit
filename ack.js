@@ -1,4 +1,4 @@
-/*! argnode Consent Kit | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
+/*! argnode Consent Kit 0.4.0 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
 /*
  * One file, no dependencies. Read docs/DESIGN.md for the reasons behind each step.
  * The order of the startup sequence (B7) matters: consent default comes before
