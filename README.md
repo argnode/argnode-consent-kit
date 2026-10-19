@@ -6,14 +6,39 @@ Made by [Argnode Oy](https://www.argnode.com).
 
 Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). The changes are in [CHANGELOG.md](CHANGELOG.md).
 
-## What it does
+![The default banner: Choose cookies, Reject all and Accept all](.github/banner-light.png)
 
-- Shows a cookie banner with three equal choices: **Accept all**, **Reject all**, **Choose cookies**.
-- Sends Google Consent Mode v2 signals. All non-necessary signals are `denied` until the visitor chooses.
-- Loads Google Tag Manager or the Google tag itself, after the consent default. So no Google tag can run before consent.
-- Pushes one dataLayer event for each allowed category, on every page load: `cookie_cat_functional`, `cookie_cat_statistic`, `cookie_cat_marketing`, `cookie_cat_unclassified`. These are the Cookie Information event names, so an existing GTM container works without changes. An event is never pushed twice on one page view.
-- Prints your cookie policy from the same file that drives the banner.
-- Asks again when your cookie list changes, and after 12 months.
+## Features
+
+### Consent that follows the rules
+- A modal banner with three choices on the first layer: **Accept all**, **Reject all** and **Choose cookies**. Accept and Reject have the same size and style.
+- Choices per category, with all non-necessary categories off by default. Each category shows a table of its cookies.
+- Escape does not close the banner. Only a choice closes it.
+- Withdrawal is as easy as consent: a footer link reopens the banner with the current choices. When a visitor withdraws, the tool deletes the first-party cookies of that category.
+- The banner asks again when your cookie list changes, and after 12 months. Each stored consent holds a hash of the cookie list the visitor saw.
+- Pages that you list, for example your cookie policy and privacy policy, open without the banner. A visitor can read them before a choice, and nothing is measured on them.
+
+### Google Consent Mode v2
+- All non-necessary signals are `denied` before any tag runs.
+- The tool loads Google Tag Manager or the Google tag itself, after the consent default. So no Google tag can run before consent.
+- URL passthrough and ads data redaction are on by default.
+- One dataLayer event for each allowed category on every page load: `cookie_cat_functional`, `cookie_cat_statistic`, `cookie_cat_marketing`, `cookie_cat_unclassified`. These are the Cookie Information event names, so an existing GTM container works without changes. An event is never pushed twice on one page view.
+
+### One file drives everything
+- `cookies.json` drives the banner, the cookie policy on your site and the consent version. They cannot go out of step.
+
+### Light and self-hosted
+- One script, no dependencies, about 11 kB gzipped. No server, no database, no account and no third-party requests of its own.
+- Works with a strict Content Security Policy (`script-src 'self'`), with no inline script.
+- Search, social and AI crawlers get no banner and no tags. The page content stays the same.
+- The consent cookie is set on your main domain, so it is shared across subdomains.
+
+### Yours to change
+- Change the look with CSS variables in your own `custom.css`.
+- Change the texts in your own files. English and Finnish are included.
+- Attribution as a text link, a logo, or none.
+- Connect your own systems (for example a CRM) with page options, dataLayer events and a small JavaScript API.
+- `git pull` updates the tool and never changes your own files.
 
 ## Install
 
@@ -21,7 +46,7 @@ Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). 
 
    ```bash
    cd public_html
-   git clone <repository URL> cmp
+   git clone https://github.com/argnode/argnode-consent-kit.git cmp
    ```
 
 2. Block web access to the `cmp/.git/` folder. On Apache, the `.htaccess` in this repository does it. On nginx, add this to your server block:
