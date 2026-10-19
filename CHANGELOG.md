@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 (19.10.2026)
+
+- `banner.exemptPaths`: pages that open without the banner when there is no consent yet, for example the cookie policy and privacy policy. Consent stays denied and nothing is stored. Path only, exact match.
+
 ## 0.4.0 (11.10.2026)
 
 - No user ID or CRM code in the tool. A site connects its own systems with `window.ackOptions`, set before `ack.js` loads: `consent` (a preset choice, or a Promise for one), `consentTimeoutMs`, `hideCategories`, `beforeCategoryEvents(record)`.

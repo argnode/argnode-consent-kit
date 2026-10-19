@@ -1,4 +1,4 @@
-/*! argnode Consent Kit 0.4.0 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
+/*! argnode Consent Kit 0.5.0 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
 /*
  * One file, no dependencies. Read docs/DESIGN.md for the reasons behind each step.
  * The order of the startup sequence (B7) matters: consent default comes before
@@ -29,7 +29,7 @@
     // attribution: 'text' (default) | 'logo' (top-right, hidden on small screens) | 'none'.
     // attributionLogo: 'on-light' (dark wordmark, for light banners) | 'on-dark'.
     banner: { attribution: 'text', attributionLogo: 'on-light', poweredByText: 'Powered by argnode',
-      poweredByUrl: null, policyUrl: null },
+      poweredByUrl: null, policyUrl: null, exemptPaths: [] },
     bots: { skip: true, pattern: null },
     css: true,
     customCss: false,
@@ -564,6 +564,20 @@
       cookieTableHtml(cat, 'ack-table') + '</details></div>';
   }
 
+  // B10: pages a visitor can read before a choice (cookie and privacy policy).
+  // Path only, exact match: host, query, hash, case and a trailing slash do not count.
+  function normalisePath(p) {
+    p = String(p || '').split(/[?#]/)[0].toLowerCase().replace(/\/+$/, '');
+    return p || '/';
+  }
+
+  function isExemptPage() {
+    var list = settings.banner.exemptPaths;
+    if (!Array.isArray(list) || !list.length) return false;
+    var here = normalisePath(location.pathname);
+    return list.some(function (p) { return normalisePath(p) === here; });
+  }
+
   function policyUrl() {
     var u = settings.banner.policyUrl;
     return u ? pickText(u) : null;
@@ -782,7 +796,8 @@
 
     return domReady.then(function () {
       if (document.querySelector('[data-ack-policy]')) renderPolicy('[data-ack-policy]');
-      if (!record) {
+      // No banner on an exempt page: consent stays at the denied default, nothing is stored.
+      if (!record && !isExemptPage()) {
         return Promise.all([ensureTexts(), baseCssReady]).then(function () { showBanner(false); });
       }
     });

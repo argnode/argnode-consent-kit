@@ -30,7 +30,8 @@
     "policyUrl": {
       "en": "/cookie-policy",
       "fi": "/evastekaytanto"
-    }
+    },
+    "exemptPaths": []
   },
   "bots": {
     "skip": true,

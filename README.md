@@ -4,7 +4,7 @@ Free, open-source, self-hosted consent management platform (CMP) with native Goo
 
 Made by [Argnode Oy](https://www.argnode.com).
 
-Status: version 0.4.0, in production on [argnode.com](https://www.argnode.com). The design is in [docs/DESIGN.md](docs/DESIGN.md), the changes in [CHANGELOG.md](CHANGELOG.md).
+Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). The design is in [docs/DESIGN.md](docs/DESIGN.md), the changes in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it does
 
@@ -37,7 +37,7 @@ Status: version 0.4.0, in production on [argnode.com](https://www.argnode.com). 
    cp cmp/cookies.sample.json cmp/cookies.json
    ```
 
-   - In `settings.json`, set `loader.mode` (`gtm`, `gtag` or `none`) and your GTM or GA4 ID. Set `banner.policyUrl` to your cookie policy page.
+   - In `settings.json`, set `loader.mode` (`gtm`, `gtag` or `none`) and your GTM or GA4 ID. Set `banner.policyUrl` to your cookie policy page. Put the paths of your cookie policy and privacy policy pages in `banner.exemptPaths` (for example `["/cookie-policy", "/privacy-policy"]`). These pages open without the banner, so a visitor can read them before a choice. Nothing is measured on them until the visitor chooses.
    - In `cookies.json`, list every cookie your site uses. Change `updated` to today's date (`dd.mm.yyyy`).
 
 4. **Remove your own GTM or Google tag snippet from your pages.** The tool loads it. If both exist, your snippet can run before the consent default.
