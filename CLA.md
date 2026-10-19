@@ -43,7 +43,7 @@ Argnode will continue to make the Project available under an open-source licence
 
 ## 8. Law
 
-Finnish law applies to this agreement. [TODO: confirm venue, e.g. Helsinki District Court.]
+Finnish law applies to this agreement. Disputes are settled in the Helsinki District Court.
 
 ## How to accept
 

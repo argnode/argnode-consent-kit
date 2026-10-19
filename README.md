@@ -1,10 +1,10 @@
-# argnode Consent Kit
+# Argnode Consent Kit (ACK)
 
 Free, open-source, self-hosted consent management platform (CMP) with native Google Consent Mode v2.
 
 Made by [Argnode Oy](https://www.argnode.com).
 
-Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). The design is in [docs/DESIGN.md](docs/DESIGN.md), the changes in [CHANGELOG.md](CHANGELOG.md).
+Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). The changes are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it does
 
@@ -108,7 +108,7 @@ All classes start with `ack-`. Nothing in `ack.css` targets elements outside `.a
 | Value | Effect |
 |---|---|
 | `text` | A small "Powered by argnode" link under the buttons. This is the default. |
-| `logo` | The argnode wordmark in the top-right corner of the banner. It is hidden on small screens. Set `attributionLogo` to `on-light` for a light banner or `on-dark` for a dark banner. |
+| `logo` | The Argnode wordmark in the top-right corner of the banner. It is hidden on small screens. Set `attributionLogo` to `on-light` for a light banner or `on-dark` for a dark banner. |
 | `none` | No attribution. |
 
 ## Page options
@@ -122,7 +122,7 @@ A script on your page can set `window.ackOptions` before `ack.js` loads. Use it 
 | `hideCategories` | Category IDs not to show in the banner for this page view. |
 | `beforeCategoryEvents(record)` | Runs after the Consent Mode update and before the category events. Push data that your tags need here. |
 
-To save a choice in your own system, listen to `ack:consent` and use only events with `src: "banner"`. Read section B9.4 of the [design](docs/DESIGN.md).
+To save a choice in your own system, listen to `ack:consent` and use only events with `src: "banner"`. Do not save events with `src: "external"`: they came from your own system, and saving them again makes a loop.
 
 ## Change the texts
 
@@ -181,7 +181,7 @@ This project uses the [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 - Do not remove the copyright and licence notices from the files.
 - You can combine this software with your own code. Your own separate files can use a different licence.
 
-The licence does not give you rights to the argnode name or logo. Read [TRADEMARKS.md](TRADEMARKS.md).
+The licence does not give you rights to the Argnode name or logo. Read [TRADEMARKS.md](TRADEMARKS.md).
 
 For a commercial licence without the MPL-2.0 obligations, contact Argnode Oy: https://www.argnode.com
 

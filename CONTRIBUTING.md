@@ -4,7 +4,7 @@ Thank you for your interest in argnode Consent Kit.
 
 ## Before you start
 
-1. Read [DESIGN.md](docs/DESIGN.md). Make sure that your change agrees with the design goals.
+1. Read the [README](README.md). Make sure that your change agrees with how the tool works: no dependencies, consent default before any tag, equal Accept and Reject.
 2. For large changes, open an issue first. Discuss the change before you write code.
 
 ## Contributor License Agreement (CLA)
