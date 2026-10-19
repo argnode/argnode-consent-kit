@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 (19.10.2026)
+
+- The default attribution text is "Powered by Argnode", with a capital A.
+- README: why ACK, feature list, screenshots and a prompt that lets an AI assistant make your settings, cookie list and CSS.
+- The repository is public at github.com/argnode/argnode-consent-kit.
+
 ## 0.5.0 (19.10.2026)
 
 - `banner.exemptPaths`: pages that open without the banner when there is no consent yet, for example the cookie policy and privacy policy. Consent stays denied and nothing is stored. Path only, exact match.

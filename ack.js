@@ -1,4 +1,4 @@
-/*! argnode Consent Kit 0.5.0 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
+/*! Argnode Consent Kit 0.5.1 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
 /*
  * One file, no dependencies.
  * The order of the startup sequence (B7) matters: consent default comes before
@@ -28,7 +28,7 @@
     storage: { cookieName: 'ack_consent', maxAgeDays: 365, domain: 'auto', path: '/', sameSite: 'Lax' },
     // attribution: 'text' (default) | 'logo' (top-right, hidden on small screens) | 'none'.
     // attributionLogo: 'on-light' (dark wordmark, for light banners) | 'on-dark'.
-    banner: { attribution: 'text', attributionLogo: 'on-light', poweredByText: 'Powered by argnode',
+    banner: { attribution: 'text', attributionLogo: 'on-light', poweredByText: 'Powered by Argnode',
       poweredByUrl: null, policyUrl: null, exemptPaths: [] },
     bots: { skip: true, pattern: null },
     css: true,

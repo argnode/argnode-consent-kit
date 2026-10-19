@@ -2,9 +2,38 @@
 
 Free, open-source, self-hosted consent management platform (CMP) with native Google Consent Mode v2.
 
-Made by [Argnode Oy](https://www.argnode.com).
+Made by [Argnode Oy](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme).
 
-Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). The changes are in [CHANGELOG.md](CHANGELOG.md).
+Status: version 0.5.1, in production on [argnode.com](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme). The changes are in [CHANGELOG.md](CHANGELOG.md).
+
+## Why ACK
+
+- **You install it, you own it.** The files run on your own server. No subscription, no fees per page view or domain, and no expired card can switch your banner off.
+- **Free and open source.** MPL-2.0. Use it on your own sites and set it up for your clients.
+- **Made for the strict Finnish rules.** Designed against the cookie guidance of Traficom, the Finnish regulator, one of the strictest readings in the EU: equal Accept and Reject, nothing on before a choice, easy withdrawal.
+- **No lost traffic sources.** The banner is a modal, so the visitor chooses on the landing page, where the ad click IDs, UTM tags and referrer are. A banner that visitors can ignore gets its "yes" on page two, and a paid click becomes "direct" traffic.
+- **Google Consent Mode v2, done right.** The tool sets the consent default and then loads Google Tag Manager or the Google tag itself, so no Google tag can fire before consent. Google tags then react to the choice by themselves.
+- **Easy move from Cookie Information.** The dataLayer events have the same names, so the trigger logic of your other tags may need no changes.
+- **One file for all cookie tables.** One `cookies.json` makes the tables in the banner and in your cookie policy. They never go out of step.
+- **Asks again when your cookies change.** Each consent is tied to a fingerprint of your cookie list, with a timestamp. Change the list and visitors are asked again.
+- **Multi-language sites.** The banner follows the page language. Texts and policy links are set for each language. English and Finnish are included.
+- **One choice for all your subdomains.** The consent is stored on your main domain by default, so a visitor who chooses on `www.example.com` is not asked again on `shop.example.com`.
+- **Policy pages without the banner.** Pages that you list, such as the cookie policy and privacy policy, can be read before a choice.
+- **Clean pages for search engines.** Search, social and AI crawlers get no banner and no tags, and bot traffic stays out of your analytics. The page content does not change.
+- **Light and fast.** One script of about 11 kB gzipped, from your own server. No framework, no dependencies, no third-party CMP script.
+- **Looks like your site.** Clean with no CSS at all. One CSS file with a few variables matches your brand.
+- **Developer friendly.** Works under a strict Content Security Policy with no inline script. Built on the native `<dialog>` element, so keyboard and screen reader support come from the browser.
+- **Ready for your CRM.** Read and write consent from your own customer profiles with page options and events, without CRM code in the tool.
+- **Set up in minutes with AI.** Copy the prompt in the install steps into your AI assistant. It looks at your site, suggests a banner style that matches, interviews you about your cookies and writes your settings, cookie list and CSS.
+
+## What ACK does not do
+
+Read this before you choose ACK.
+
+- **No cookie scanner.** The tool does not find your cookies. You list them once in `cookies.json` and keep the list up to date when you add or remove tools. The AI prompt in the install steps helps you make the first list.
+- **No IAB TCF and no Google certification.** ACK is not registered in the IAB Europe Transparency & Consent Framework (TCF), which has a yearly fee, and it is not a Google-certified CMP. So it does not make a TCF consent string.
+  - **Sites that sell ad space** with Google AdSense, Google Ad Manager or AdMob need a [Google-certified CMP](https://support.google.com/adsense/answer/13554116) to show personalised ads to visitors in the EEA, the UK and Switzerland. Without one, they can show only non-personalised or limited ads. For these sites, use a CMP from Google's certified list.
+  - **Sites that buy ads** (Google Ads, GA4, and Floodlight tags for Display & Video 360, Campaign Manager 360 and Search Ads 360) work through Consent Mode v2. Ad tech that reads only the TCF consent string gets no consent from ACK.
 
 ![The default banner: Choose cookies, Reject all and Accept all](.github/banner-light.png)
 
@@ -31,7 +60,7 @@ Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). 
 - One script, no dependencies, about 11 kB gzipped. No server, no database, no account and no third-party requests of its own.
 - Works with a strict Content Security Policy (`script-src 'self'`), with no inline script.
 - Search, social and AI crawlers get no banner and no tags. The page content stays the same.
-- The consent cookie is set on your main domain, so it is shared across subdomains.
+- The consent cookie is set on your main domain, so it is shared across subdomains. You can change this with `storage.domain`.
 
 ### Yours to change
 - Change the look with CSS variables in your own `custom.css`.
@@ -64,6 +93,53 @@ Status: version 0.5.0, in production on [argnode.com](https://www.argnode.com). 
 
    - In `settings.json`, set `loader.mode` (`gtm`, `gtag` or `none`) and your GTM or GA4 ID. Set `banner.policyUrl` to your cookie policy page. Put the paths of your cookie policy and privacy policy pages in `banner.exemptPaths` (for example `["/cookie-policy", "/privacy-policy"]`). These pages open without the banner, so a visitor can read them before a choice. Nothing is measured on them until the visitor chooses.
    - In `cookies.json`, list every cookie your site uses. Change `updated` to today's date (`dd.mm.yyyy`).
+
+   **Faster: let an AI assistant make the files.** The tool cannot scan your site for cookies, so someone must list them. Copy this prompt into your AI assistant (for example Claude). It reads this repository, looks at your site and suggests a banner style that matches it, interviews you about your cookies and writes the files. Check the result before you go live.
+
+   ````text
+   You help me set up Argnode Consent Kit (ACK), a self-hosted cookie banner with
+   Google Consent Mode v2: https://github.com/argnode/argnode-consent-kit
+
+   1. Read README.md, settings.sample.json, cookies.sample.json, i18n/en.json and
+      the CSS variables (--ack-*) at the top of ack.css in that repository.
+   2. Interview me. Ask one short group of questions at a time:
+      - Site address, languages, and the paths of my cookie policy and privacy
+        policy pages.
+      - Do I use Google Tag Manager or the Google tag (gtag.js)? The ID.
+      - Every tool that can set cookies or send data: analytics, ad pixels
+        (Google Ads, Meta, LinkedIn, TikTok...), heatmaps, chat widgets, video
+        and map embeds, forms, A/B tests, logins, shops, payment.
+      - Then ask me to accept all cookies on my site, open the browser developer
+        tools (Application > Cookies, and Local storage), and paste the list.
+        Ask again for anything that is not clear.
+      - Do not ask me about the look. Open my site yourself and read its
+        colours, fonts, corner radius, button style and if it is light or dark.
+        Then suggest a banner style that matches, in a few short lines, and ask
+        if I want it or want changes. If you cannot open my site, ask me for the
+        colours and font instead.
+   3. Write these files for me:
+      - settings.json: from settings.sample.json. Set loader.mode and the ID,
+        banner.policyUrl for each language, and banner.exemptPaths with the
+        cookie policy and privacy policy paths.
+      - cookies.json: from cookies.sample.json. Put each cookie in the correct
+        category (necessary, functional, statistic, marketing, unclassified),
+        with name, provider, domain, purpose, duration and setWhen in each of my
+        languages. Keep ack_consent in necessary. Set "updated" to today
+        (dd.mm.yyyy).
+      - custom.css: the style that I accepted, as overrides of the --ack-*
+        variables only. Accept all and Reject all must look the same, even if my
+        site's own buttons have a primary and a secondary style.
+      - i18n/custom/<language>.json and "customTexts", only if I want other
+        texts.
+   4. Rules:
+      - Do not invent cookie names, durations or providers. If you do not know
+        a value, write "[CHECK]" and tell me what to check.
+      - Write plain, short sentences that a visitor understands.
+      - At the end, list what I must do myself: remove my old GTM or Google tag
+        snippet, add the script line and the "Cookie settings" link, keep a copy
+        of every version of cookies.json, and have the texts checked. This is
+        not legal advice.
+   ````
 
 4. **Remove your own GTM or Google tag snippet from your pages.** The tool loads it. If both exist, your snippet can run before the consent default.
 
@@ -100,6 +176,18 @@ A pull never changes your own files: `settings.json`, `cookies.json`, `custom.cs
 
 If you do nothing after the clone, the tool uses the sample files. The banner works, but the cookie list is not your real list. The browser console shows a warning. Make your own `cookies.json` to be compliant.
 
+## Subdomains
+
+`settings.json` → `storage.domain` sets where the consent cookie is stored:
+
+| Value | Effect |
+|---|---|
+| `auto` | The main domain, found automatically (for example `example.com` on `shop.example.com`). One choice covers all subdomains. This is the default. |
+| `host` | Only the exact host. Each subdomain asks separately. |
+| `example.com` | The domain that you give. |
+
+For one choice across subdomains, install the tool on each subdomain with the same `cookies.json`. The consent is valid only for the cookie list that the visitor saw. If a subdomain has a different list, the visitor is asked again there. So list the cookies of all your subdomains in the one file.
+
 ## Keep old versions of cookies.json
 
 **This is a compliance requirement.** Each stored consent contains a hash of the cookie list that the visitor saw. The hash is proof only if you still have the file that made it.
@@ -124,6 +212,10 @@ The banner works without any CSS of yours. To change it, set `"customCss": true`
 
 Accept and Reject use the same variables by default. Equal prominence is a compliance requirement. If you change one, change both.
 
+This is the banner on [argnode.com](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme), with its own `custom.css` and the logo attribution:
+
+![The banner on argnode.com: dark theme, green switches, categories open](.github/banner-styled.png)
+
 All classes start with `ack-`. Nothing in `ack.css` targets elements outside `.ack-banner` and `.ack-policy`.
 
 ## Attribution
@@ -132,7 +224,7 @@ All classes start with `ack-`. Nothing in `ack.css` targets elements outside `.a
 
 | Value | Effect |
 |---|---|
-| `text` | A small "Powered by argnode" link under the buttons. This is the default. |
+| `text` | A small "Powered by Argnode" link under the buttons. This is the default. |
 | `logo` | The Argnode wordmark in the top-right corner of the banner. It is hidden on small screens. Set `attributionLogo` to `on-light` for a light banner or `on-dark` for a dark banner. |
 | `none` | No attribution. |
 
@@ -208,7 +300,7 @@ This project uses the [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 The licence does not give you rights to the Argnode name or logo. Read [TRADEMARKS.md](TRADEMARKS.md).
 
-For a commercial licence without the MPL-2.0 obligations, contact Argnode Oy: https://www.argnode.com
+For a commercial licence without the MPL-2.0 obligations, contact [Argnode Oy](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme).
 
 ## Disclaimer
 

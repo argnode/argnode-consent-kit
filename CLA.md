@@ -3,7 +3,7 @@
 > DRAFT. This text must be reviewed by a Finnish IP lawyer before use.
 
 This agreement is between you ("You") and Argnode Oy, a Finnish limited company ("Argnode").
-It applies to all Contributions that You submit to argnode Consent Kit (the "Project").
+It applies to all Contributions that You submit to Argnode Consent Kit (the "Project").
 
 ## 1. Definitions
 

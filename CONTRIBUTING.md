@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in argnode Consent Kit.
+Thank you for your interest in Argnode Consent Kit.
 
 ## Before you start
 
@@ -29,7 +29,7 @@ If you do not accept the CLA, we cannot merge your contribution.
 
 ```
 /*!
- * argnode Consent Kit
+ * Argnode Consent Kit
  * Copyright (c) 2026 Argnode Oy - https://www.argnode.com
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
