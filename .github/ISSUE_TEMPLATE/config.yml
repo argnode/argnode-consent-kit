@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Commercial help with setup
+    url: https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=issue-template
+    about: Argnode Oy installs and configures ACK for your site.
