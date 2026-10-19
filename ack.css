@@ -1,4 +1,4 @@
-/*! Argnode Consent Kit 0.5.1 | MPL-2.0 | Copyright (c) Argnode Oy */
+/*! Argnode Consent Kit 0.5.2 | MPL-2.0 | Copyright (c) Argnode Oy */
 /*
  * Default base theme. Every selector is under .ack-banner or .ack-policy, so
  * nothing leaks into the host site. Theme it by overriding the variables in

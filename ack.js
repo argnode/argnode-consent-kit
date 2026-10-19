@@ -1,4 +1,4 @@
-/*! Argnode Consent Kit 0.5.1 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
+/*! Argnode Consent Kit 0.5.2 | MPL-2.0 | Copyright (c) Argnode Oy | https://www.argnode.com */
 /*
  * One file, no dependencies.
  * The order of the startup sequence (B7) matters: consent default comes before
@@ -515,7 +515,7 @@
     // No UTM tags on Argnode's own site: a tagged internal link would restart the session.
     if (host === ATTRIBUTION_HOST || host.slice(-ATTRIBUTION_HOST.length - 1) === '.' + ATTRIBUTION_HOST) return page;
     return page + '?utm_source=' + encodeURIComponent(host) +
-      '&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=' + surface;
+      '&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_id=xye237va&utm_content=' + surface;
   }
 
   function poweredByHtml(surface, cls) {

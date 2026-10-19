@@ -4,9 +4,9 @@ Free, open-source, self-hosted consent management platform (CMP) with native Goo
 
 ![The default banner: Choose cookies, Reject all and Accept all](.github/banner-light.png)
 
-Made by [Argnode Oy](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme).
+Made by [Argnode Oy](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_id=xye237va&utm_content=readme).
 
-Status: version 0.5.1, in production on [argnode.com](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme). The changes are in [CHANGELOG.md](CHANGELOG.md).
+Status: version 0.5.2, in production on [argnode.com](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_id=xye237va&utm_content=readme). The changes are in [CHANGELOG.md](CHANGELOG.md).
 
 ## Why ACK
 
@@ -206,7 +206,7 @@ The banner works without any CSS of yours. To change it, set `"customCss": true`
 
 Accept and Reject use the same variables by default. Equal prominence is a compliance requirement. If you change one, change both.
 
-This is the banner on [argnode.com](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme), with its own `custom.css` and the logo attribution:
+This is the banner on [argnode.com](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_id=xye237va&utm_content=readme), with its own `custom.css` and the logo attribution:
 
 ![The banner on argnode.com: dark theme, green switches, categories open](.github/banner-styled.png)
 
@@ -294,7 +294,7 @@ This project uses the [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 The licence does not give you rights to the Argnode name or logo. Read [TRADEMARKS.md](TRADEMARKS.md).
 
-For a commercial licence without the MPL-2.0 obligations, contact [Argnode Oy](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_content=readme).
+For a commercial licence without the MPL-2.0 obligations, contact [Argnode Oy](https://www.argnode.com/?utm_source=github.com&utm_medium=referral&utm_campaign=evergreen-consent-kit&utm_id=xye237va&utm_content=readme).
 
 ## Disclaimer
 

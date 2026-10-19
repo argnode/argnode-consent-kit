@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 (19.10.2026)
+
+- The "Powered by Argnode" link carries the campaign ID (`utm_id`), so all its traffic can be filtered as one campaign.
+
 ## 0.5.1 (19.10.2026)
 
 - The default attribution text is "Powered by Argnode", with a capital A.
